@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import FeedPage from "./pages/feed";
+import WeeklyTrain from "./pages/WeeklyTrain";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 
 const router = createHashRouter([
@@ -10,17 +10,17 @@ const router = createHashRouter([
     element: <App />,
     children: [
       {
-        element: <FeedPage />,
+        element: <WeeklyTrain />,
         index: true
       },
-      {
-        path: "/episodes",
-        element: <FeedPage />
-      },
-      {
-        path: "/headline",
-        element: <FeedPage />
-      }
+      // {
+      //   path: "/episodes",
+      //   element: <FeedPage />
+      // },
+      // {
+      //   path: "/headline",
+      //   element: <FeedPage />
+      // }
     ]
   }
 ]);

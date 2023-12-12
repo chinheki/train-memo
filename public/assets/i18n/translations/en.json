@@ -1,10 +1,10 @@
 {
-    "sidebar.feed":"Feed",
-    "sidebar.episodes":"Episodes",
-    "sidebar.headline":"Headline",
+    "sidebar.daily":"Daily",
+    "sidebar.command":"Execise",
+    "sidebar.actions":"Actions",
     "header.search.placeholder":"search",
     "header.signup":"Sign up",
     "header.login":"Login",
-    "header.lan.ko":"Korean",
+    "header.lan.zh":"Chinese",
     "header.lan.en":"English"
 }

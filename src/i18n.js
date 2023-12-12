@@ -1,10 +1,10 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import KO from "../public/assets/i18n/translations/ko.json";
+import ZH from "../public/assets/i18n/translations/zh.json";
 import EN from "../public/assets/i18n/translations/en.json";
 i18n.use(initReactI18next).init({
-  lng: "ko",
-  fallbackLng: "ko",
+  lng: "zh",
+  fallbackLng: "zh",
   ns: ["translations"],
   defaultNs: "translation",
   keySeparator: false,
@@ -18,7 +18,7 @@ i18n.use(initReactI18next).init({
     useSuspense: false
   }
 });
-i18n.addResourceBundle("ko", "translations", KO, false, true);
+i18n.addResourceBundle("zh", "translations", ZH, false, true);
 i18n.addResourceBundle("en", "translations", EN, false, true);
 
 export default i18n;

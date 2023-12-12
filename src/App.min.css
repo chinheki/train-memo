@@ -1,1 +1,1 @@
-.app{display:flex;background-color:black;color:#fff}.app>.right{display:flex;flex-direction:column;width:100%}
+html,body,#root{height:100%;width:100%;overflow:hidden;margin:0;padding:0}#root{display:flex;flex-direction:column}#root .content{height:100%;flex:1 1;display:flex;align-items:center}
