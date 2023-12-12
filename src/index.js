@@ -2,9 +2,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import WeeklyTrain from "./pages/WeeklyTrain";
-import { createHashRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider,createBrowserRouter } from "react-router-dom";
 
-const router = createHashRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
