@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  width: 100%;
+      justify-content: space-evenly;
+    height: fit-content;
+  .search {
+    width: 50%;
+  }
+  .right{
+    display: flex;
+  }
+}
