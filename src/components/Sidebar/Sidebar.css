@@ -1,6 +1,6 @@
-.sidebar {
-  width: 100vw;
+.sidebar>ul {
   height: fit-content;
   display: flex;
-  flex: 0 0;
+  flex:0 0;
+  width: 100vw;
 }

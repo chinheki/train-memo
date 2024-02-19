@@ -1,25 +1,21 @@
 import React from "react";
 import { Menu } from "antd";
-import { CheckSquareOutlined, BarsOutlined, FireOutlined } from '@ant-design/icons';
 
-import "./Sidebar.scss";
+import "./Sidebar.css";
 import { useTranslation } from "react-i18next";
 import { redirect, Link } from "react-router-dom";
 const items = (t) => [
   {
-    label: <Link to={"/"}>{t("sidebar.daily")}</Link>,
-    key: "daily",
-    icon: <CheckSquareOutlined />
+    label: <Link to={"/"}>Protfolio</Link>,
+    key: "protfolio",
   },
   {
-    label: <Link to={"actions"}>{t("sidebar.actions")}</Link>,
-    key: "actions",
-    icon:<BarsOutlined />
+    label: <Link to={"actions"}>Team</Link>,
+    key: "team",
   },
   {
-    label: <Link to={"episodes"}>{t("sidebar.command")}</Link>,
-    key: "command",
-    icon: <FireOutlined />
+    label: <Link to={"episodes"}>Writting press</Link>,
+    key: "press",
   }
 ];
 
@@ -27,7 +23,7 @@ const Sidebar = () => {
   const { t } = useTranslation();
   return (
     <div className="sidebar">
-      <Menu items={items(t)} defaultSelectedKeys={["daily"]} mode="horizontal" />
+      <Menu items={items(t)} defaultSelectedKeys={["protfolio"]} mode="horizontal" />
     </div>
   );
 };

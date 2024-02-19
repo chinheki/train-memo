@@ -1,16 +1,16 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import WeeklyTrain from "./pages/WeeklyTrain";
-import { createHashRouter, RouterProvider,createBrowserRouter } from "react-router-dom";
+import TopBanner from "./pages/Homepage";
+import { createHashRouter, RouterProvider, } from "react-router-dom";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,
     children: [
       {
-        element: <WeeklyTrain />,
+        element: <TopBanner />,
         index: true
       },
       // {

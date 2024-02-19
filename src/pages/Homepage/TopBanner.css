@@ -1,0 +1,13 @@
+.top-banner {
+  overflow-x: hide;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.top-banner>svg{
+  position: relative;
+  width:inherit;
+}
+.top-banner>img{
+  width: inherit;
+}

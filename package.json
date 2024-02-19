@@ -1,10 +1,9 @@
 {
-  "name": "train-memo",
+  "name": "udl-homepage",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "private": false,
-  "homepage": "https://chinheki.github.io/train-memo/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --mode development",
@@ -17,13 +16,11 @@
   "dependencies": {
     "antd": "^5.12.1",
     "babel-plugin-react-svg": "^3.0.3",
-    "gh-pages": "^6.1.0",
     "i18next": "^23.7.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.5.0",
-    "react-router-dom": "^6.20.1",
-    "sass": "^1.69.5"
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
