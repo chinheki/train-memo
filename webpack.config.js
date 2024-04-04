@@ -1,11 +1,13 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-
+const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
   output: {
-    filename: "bundle.js"
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "build/")
   },
   module: {
     rules: [
@@ -29,6 +31,10 @@ module.exports = {
         ]
       },
       {
+    test: /\.mp3$/,
+    loader: 'file-loader'
+},
+      {
         test: /\.svg$/,
         use: [
           {
@@ -47,14 +53,21 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
     modules: [
-            path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, './'),
-        ]
+      path.resolve(__dirname, "node_modules"),
+      path.resolve(__dirname, "./")
+    ],
+    fallback: {
+        "fs": false
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html"
-    })
+    }),
+   new Dotenv(".env"),
+      // new webpack.DefinePlugin({
+      //   'process.env.REACT_APP_ISSUE_TOKEN': JSON.stringify(env.REACT_APP_ISSUE_TOKEN),
+      // }),
   ],
   devServer: {
     static: {

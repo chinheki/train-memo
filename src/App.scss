@@ -8,10 +8,35 @@ html,body,#root{
 #root {
   display: flex;
   flex-direction: column;
+  *{
+z-index:1;
+    font-family: 'Pixel';
+  }
+  #filepicker{
+    
+  }
   .content{
     height: 100%;
+  width:100%;
     flex:1 1;
     display: flex;
     align-items: center;
+      position: relative;
+    .bk{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+          filter: brightness(0.5);
+    }
   }
+}
+
+@font-face {
+  font-family: 'Pixel';
+  src: url('../public/assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf');
 }

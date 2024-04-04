@@ -7,19 +7,19 @@ import { useTranslation } from "react-i18next";
 import { redirect, Link } from "react-router-dom";
 const items = (t) => [
   {
-    label: <Link to={"/"}>{t("sidebar.daily")}</Link>,
+    label: <Link to={"/"}>{t("sidebar.command")}</Link>,
+    key: "actions",
+    icon: <FireOutlined />
+  },
+  {
+    label: <Link to={"week"}>{t("sidebar.daily")}</Link>,
     key: "daily",
     icon: <CheckSquareOutlined />
   },
   {
-    label: <Link to={"actions"}>{t("sidebar.actions")}</Link>,
-    key: "actions",
+    label: <Link to={"sports"}>{t("sidebar.actions")}</Link>,
+    key: "sports",
     icon:<BarsOutlined />
-  },
-  {
-    label: <Link to={"episodes"}>{t("sidebar.command")}</Link>,
-    key: "command",
-    icon: <FireOutlined />
   }
 ];
 
@@ -27,7 +27,7 @@ const Sidebar = () => {
   const { t } = useTranslation();
   return (
     <div className="sidebar">
-      <Menu items={items(t)} defaultSelectedKeys={["daily"]} mode="horizontal" />
+      <Menu items={items(t)} defaultSelectedKeys={["actions"]} mode="horizontal" />
     </div>
   );
 };

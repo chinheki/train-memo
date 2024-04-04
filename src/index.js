@@ -2,25 +2,26 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import WeeklyTrain from "./pages/WeeklyTrain";
-import { createHashRouter, RouterProvider,createBrowserRouter } from "react-router-dom";
-
-const router = createBrowserRouter([
+import { createHashRouter, RouterProvider, } from "react-router-dom";
+import TrainBoard from "./pages/TrainBoard";
+import SportsList from "./pages/Sports";
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,
     children: [
       {
         element: <WeeklyTrain />,
-        index: true
+        path: "/week",
       },
-      // {
-      //   path: "/episodes",
-      //   element: <FeedPage />
-      // },
-      // {
-      //   path: "/headline",
-      //   element: <FeedPage />
-      // }
+      {
+        index: true,
+        element: <TrainBoard />
+      },
+      {
+        path: "/sports",
+        element: <SportsList />
+      }
     ]
   }
 ]);

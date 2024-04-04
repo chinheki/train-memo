@@ -1,0 +1,56 @@
+.train-board {
+    overflow-x: visible;
+    width: fit-content;
+    border: solid 5px rgb(244, 164, 107, 1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+    background: rgb(244, 164, 107, 0.5);
+    color: #FFF;
+    padding: 20px;
+    z-index: 1;
+    margin: auto;
+    padding: 16px;
+    border-radius: 16px;
+    gap: 16px;
+    display: flex;
+        text-wrap: nowrap;
+    flex-direction: column;
+  .time{
+    position: center;
+    font-size: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .train-row{
+    margin: auto;
+  width:80%;
+    display: flex;
+     justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 32px;
+button{
+      font-size: 32px;
+    height: 70px;
+    font-weight: bolder;
+    background: burlywood;
+    color: antiquewhite;
+    &:hover{
+          color: brown !important;
+    border-color: brown !important;
+    }
+}
+  }
+}
+
+.weekly-train .dots {
+  height: 600px;
+  width: 750px;
+  background-size: contain;
+}
+.weekly-train .timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
