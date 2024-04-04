@@ -77,7 +77,13 @@ audio.play();
 audio.play();
   }
   return (
-    <div className="train-board">
+    <>
+       <div className="train-row">
+        立刻开始单次训练
+      </div>
+      <div className="train-row">
+        ---------------
+    </div>
     <div className="train-row">
       每组运动时间：
       <InputNumber value={min} onChange={(v) => setMin(v)}></InputNumber> m
@@ -98,30 +104,17 @@ audio.play();
     <div className="train-row">
       <div className="time">{getTimerStringBySeconds(time)}</div>
     </div>
-    </div>
+    </>
   );
 };
 export default SingleTrain;
 
-/**
- * get string in format HH:mm:ss
- * @param {number} hour
- * @param {number} minute
- */
-function getTimerString(hour, minute) {
+
+export function getTimerStringBySeconds(seconds) {
   const padZero = (num) => (num < 10 ? "0" + num : num);
-  const seconds = 0;
-  const formattedTime = `${padZero(hour)}:${padZero(minute)}:${padZero(
-    seconds
-  )}`;
-  return formattedTime;
-}
-function getTimerStringBySeconds(seconds) {
-  const padZero = (num) => (num < 10 ? "0" + num : num);
-  const hour = Math.floor(seconds / 3600);
-  const minute = Math.floor((seconds % 3600) / 60);
+  const minute =Math.floor(seconds / 60);
   const second = seconds % 60;
-  const formattedTime = `${padZero(hour)}:${padZero(minute)}:${padZero(second)}`;
+  const formattedTime = `${padZero(minute)}:${padZero(second)}`;
   return formattedTime;
 }
 export function getTotalSeconds(min, sec) {

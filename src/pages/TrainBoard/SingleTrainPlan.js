@@ -55,7 +55,10 @@ const SingleTrainPlan = ({ savePlan,sport }) => {
     setDec(v.target.value)
   }
   return (
-    <div className="train-board">
+    <>
+      <div className="train-row">
+        单次训练
+      </div>
       <div className="train-row">
         运动项目：
         <Input onChange={onChangeName} value={name}></Input>
@@ -104,13 +107,13 @@ const SingleTrainPlan = ({ savePlan,sport }) => {
           保存
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 export default SingleTrainPlan;
 
-  const getMinAndSec = (totalSeconds) => {
-    if (typeof totalSeconds !== 'number') {
+  export const getMinAndSec = (totalSeconds) => {
+    if (!totalSeconds||typeof totalSeconds !== 'number') {
       return { minutes: 0, seconds: 0 };
     }
     const minutes = Math.floor(totalSeconds / 60);

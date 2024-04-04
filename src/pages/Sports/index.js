@@ -7,11 +7,15 @@ import React, {
 } from "react";
 import "./Sports.scss";
 import { Button, Checkbox, InputNumber } from "antd";
-import { DataContext, UpdateDataContext } from "../../App";
+import { DataContext, TrainContext, UpdateDataContext } from "../../App";
 import SingleTrainPlan from "../TrainBoard/SingleTrainPlan";
 import PartSelect from "../TrainBoard/PartSelect";
+import { redirect, Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 const SportsList = () => {
   const data = useContext(DataContext);
+  const plan = useContext(TrainContext);
+  const navigate = useNavigate();
   const { update, insert, remove } = useContext(UpdateDataContext);
   const [newRow, setNewRow] = useState(false);
   const [editSport, setSport] = useState(null);
@@ -74,11 +78,20 @@ const SportsList = () => {
     },
     [data?.sports]
   );
-  const generatePlan = useCallback(() => {}, []);
+  const generatePlan = useCallback(() => {
+    plan.updateTrainList(
+      checked
+      .map((id) => (data?.sports || []).find((s) => s.id === id))
+      .filter((d) => !!d)
+      );
+      navigate("/");
+  }, [checked, plan, data?.sports,redirect]);
   return (
     <>
       {!newRow && (
         <div className="train-board">
+          <div className="train-row">训练项目</div>
+          <div className="train-row">---------------</div>
           <div className="sports-grid">
             {(data?.sports ?? []).map((s) => (
               <>
@@ -87,7 +100,9 @@ const SportsList = () => {
                   checked={checked.includes(s.id)}
                 ></Checkbox>
                 <div> {s.name}</div>
-                <div><PartSelect type={s.type} view /></div>
+                <div>
+                  <PartSelect type={s.type} view />
+                </div>
                 <div> {formatTime(s.trainTime, s.round)}</div>
                 <div>
                   {" "}
@@ -103,7 +118,7 @@ const SportsList = () => {
           </div>
           <div className="sport-row">
             <Button onClick={onRandomCheck}>随机选择</Button>
-            <Button onClick={() => setNewRow(true)}>
+            <Button onClick={generatePlan} disabled={!checked.length}>
               生成训练计划(共{randomTotalTime})
             </Button>
           </div>

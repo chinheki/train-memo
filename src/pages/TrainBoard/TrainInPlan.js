@@ -3,14 +3,23 @@ import "./TrainBoard.scss";
 import start from "../../../public/assets/sounds/start.mp3";
 import stop from "../../../public/assets/sounds/stop.mp3";
 import { Button, InputNumber } from "antd";
-const SingleTrain = ({sport}) => {
-  const [min, setMin] = useState(0);
-  const [sec, setSec] = useState(0);
-    const [minStop, setMinStop] = useState(0);
-  const [secStop, setSecStop] = useState(0);
+import { getMinAndSec } from "./SingleTrainPlan";
+import { getTimerStringBySeconds } from "./SingleTrain";
+const TrainInPlan = ({sport,finish,play,no}) => {
+  const [min, setMin] = useState(getMinAndSec(sport.trainTime).minutes);
+  const [sec, setSec] = useState(getMinAndSec(sport.trainTime).seconds);
+    const [minStop, setMinStop] = useState(getMinAndSec(sport.relaxTime).minutes);
+  const [secStop, setSecStop] = useState(getMinAndSec(sport.relaxTime).seconds);
   const [time, setTime] = useState(0);
   const [timer, setTimer] = useState(false);
-  const [round, setRound] = useState(1);
+  const [round, setRound] = useState(sport.round || 1);
+  useEffect(() => {
+    if (play) {
+      setTimer(true)
+    } else {
+      setTimer(false)
+    }
+  },[play])
   useEffect(() => {
     let intervalId;
     let loopCount = 0;
@@ -22,33 +31,31 @@ const SingleTrain = ({sport}) => {
       playStartSound();
       intervalId = setInterval(() => {
         console.log(remainingTime)
-        setTime(remainingTime);
-        if (remainingTime === 0) {
-          if (loopCount < round*2-2 ) {
-            loopCount++;
-            if (loopCount % 2 === 1) {
-              if (relaxTime > 0) {
-                remainingTime = relaxTime; // Start new timer
-                console.log('finish one round')
-                playRelaxSound();
+        if (timer) {
+          setTime(remainingTime);
+          if (remainingTime === 0) {
+            if (loopCount < round * 2 - 2) {
+              loopCount++;
+              if (loopCount % 2 === 1) {
+                if (relaxTime > 0) {
+                  remainingTime = relaxTime; // Start new timer
+                  playRelaxSound();
+                } else {
+                  remainingTime = 0; // Start new timer
+                }
               } else {
-                remainingTime = 0; // Start new timer
+                remainingTime = trainTime; // Start the first timer again
+                playStartSound();
               }
             } else {
-              remainingTime = trainTime; // Start the first timer again
-        console.log('start new round')
-              playStartSound();
-            }
-          } else {
-        console.log('finish')
               playRelaxSound();
             
-      clearInterval(intervalId);
-      setTimer(false)
+              clearInterval(intervalId);
+              setTimer(false)
+            }
+          } else {
+            remainingTime--;
           }
-        } else {
-          
-          remainingTime--;
         }
 
       }, 1000);
@@ -58,12 +65,7 @@ const SingleTrain = ({sport}) => {
       clearInterval(intervalId);
     };
   }, [timer, min, sec,round,minStop,secStop]);
-  const stopTrain = () => {
-  setTimer(false)
-    setTime(0);
-  
-}
-  const disableStart=useMemo(()=>(min<=0&&sec<=0)||round<=0,[min,sec,round])
+
   function playRelaxSound() {
     // Code to play the sound
     // You can use the HTML5 Audio element or any other library to play the sound
@@ -77,7 +79,10 @@ audio.play();
 audio.play();
   }
   return (
-    <div className="train-board">
+    <>
+       <div className="train-row">
+     {no} {sport.name||""}
+    </div>
     <div className="train-row">
       每组运动时间：
       <InputNumber value={min} onChange={(v) => setMin(v)}></InputNumber> m
@@ -92,38 +97,15 @@ audio.play();
       共 <InputNumber value={round} onChange={(v) => setRound(v)}></InputNumber> 组
     </div>
     <div className="train-row">
-      {!timer&&<Button onClick={() => setTimer(true)} disabled={disableStart}>Start</Button>}
-      {timer&&<Button onClick={stopTrain}>Stop</Button>}
-    </div>
-    <div className="train-row">
       <div className="time">{getTimerStringBySeconds(time)}</div>
-    </div>
-    </div>
+      </div>
+    </>
   );
 };
-export default SingleTrain;
+export default TrainInPlan;
 
-/**
- * get string in format HH:mm:ss
- * @param {number} hour
- * @param {number} minute
- */
-function getTimerString(hour, minute) {
-  const padZero = (num) => (num < 10 ? "0" + num : num);
-  const seconds = 0;
-  const formattedTime = `${padZero(hour)}:${padZero(minute)}:${padZero(
-    seconds
-  )}`;
-  return formattedTime;
-}
-function getTimerStringBySeconds(seconds) {
-  const padZero = (num) => (num < 10 ? "0" + num : num);
-  const hour = Math.floor(seconds / 3600);
-  const minute = Math.floor((seconds % 3600) / 60);
-  const second = seconds % 60;
-  const formattedTime = `${padZero(hour)}:${padZero(minute)}:${padZero(second)}`;
-  return formattedTime;
-}
-function getTotalSeconds(min, sec) {
+
+
+export function getTotalSeconds(min, sec) {
   return min * 60 + sec;
 }
