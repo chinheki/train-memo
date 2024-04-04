@@ -1,6 +1,6 @@
 import React,{createContext,useEffect,useState} from "react";
 import Sidebar from "./components/Sidebar";
-import "./App.scss";
+import "./App.css";
 import "./i18n";
 import { Outlet } from "react-router-dom";
 import diagram from "../public/assets/images/bk.jpg";

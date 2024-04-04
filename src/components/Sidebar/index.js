@@ -1,8 +1,7 @@
 import React from "react";
 import { Menu } from "antd";
-import { CheckSquareOutlined, BarsOutlined, FireOutlined } from '@ant-design/icons';
 
-import "./Sidebar.scss";
+import "./Sidebar.css";
 import { useTranslation } from "react-i18next";
 import { redirect, Link } from "react-router-dom";
 const items = (t) => [

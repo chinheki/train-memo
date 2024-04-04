@@ -1,7 +1,5 @@
 import React from "react";
 import { Carousel } from "antd";
-import { Link } from "react-router-dom";
-import "./SubManner.scss";
 
 const SubManner = () => {
   const list = [
