@@ -43,7 +43,19 @@ button{
 }
   }
 }
-
+.sport-row{
+    margin: auto;
+  width:100%;
+    display: flex;
+     justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 32px;
+button{
+    font-weight: bolder;
+    width:100%;
+}
+  }
 .weekly-train .dots {
   height: 600px;
   width: 750px;
@@ -53,4 +65,31 @@ button{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.part{
+      background: antiquewhite;
+    border-radius: 4px;
+    padding: 4px;
+    font-size: 20px;
+    font-weight: lighter;
+      user-select: none;
+      cursor: pointer;
+    &.checked{
+    background: burlywood;
+    }
+}
+.no-gap{
+  gap:2px !important;
+}
+.sports-grid{
+  >div{
+display: inline-flex;
+gap:2px;
+    .part{
+    padding: 2px;
+    font-size: 12px;
+    user-select: none;
+      cursor: pointer;
+  }
+}
 }

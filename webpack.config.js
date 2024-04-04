@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const Dotenv = require('dotenv-webpack');
+const dotenv = require('dotenv').config({ path: __dirname + '/.env' })
 const webpack = require('webpack');
 module.exports = {
   mode: "development",
@@ -57,14 +58,24 @@ module.exports = {
       path.resolve(__dirname, "./")
     ],
     fallback: {
-        "fs": false
+      "fs": false,
+       "http": false,
+      "https": false,
+      "querystring": false,
+       "url":false,
+       "crypto":false,
+       "stream":false,
+       "path":false,
     },
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html"
     }),
-   new Dotenv(".env"),
+    // new Dotenv(".env"),
+     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(dotenv.parsed),
+    }),
       // new webpack.DefinePlugin({
       //   'process.env.REACT_APP_ISSUE_TOKEN': JSON.stringify(env.REACT_APP_ISSUE_TOKEN),
       // }),

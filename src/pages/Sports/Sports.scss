@@ -1,0 +1,8 @@
+.sports-grid {
+  display: grid;
+  grid-template-columns: 20px repeat(6, 1fr);
+  grid-gap: 10px; /* Adjust the gap between columns as needed */
+  align-items: center; /* Vertically center the items */
+  justify-items: center; /* Horizontally center the items */
+}
+

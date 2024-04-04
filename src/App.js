@@ -10,6 +10,7 @@ import { json2csv } from "json-2-csv";
 import { Button } from "antd/es/radio"; 
 import { saveAs } from 'file-saver';
 export const DataContext = createContext(null);
+export const UpdateDataContext = createContext({update:()=>{},insert:()=>{},remove:()=>{}});
 const App = () => {
   // const [csvFilePath, setPath] = useState(null);
   const value = useLocalStorage()
@@ -35,6 +36,7 @@ const App = () => {
   // },[])
   return (
     <DataContext.Provider value={value.data}>
+    <UpdateDataContext.Provider value={{update:value.updateData,insert:value.insertData,remove:value.deleteData}}>
       
       <div className="content">
         <div className='bk'  style={{ backgroundImage: `url(${diagram})` }}/>
@@ -42,6 +44,7 @@ const App = () => {
        
       </div>
        <Sidebar />
+    </UpdateDataContext.Provider>
     </DataContext.Provider>
   );
 };

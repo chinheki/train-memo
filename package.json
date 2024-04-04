@@ -4,6 +4,12 @@
   "description": "",
   "main": "index.js",
   "private": false,
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true
+    }
+  },
   "homepage": "https://chinheki.github.io/train-memo/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,9 +21,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.19.0",
+    "@octokit/core": "^6.1.1",
     "antd": "^5.12.1",
     "axios": "^1.6.8",
     "babel-plugin-react-svg": "^3.0.3",
+    "cloudinary": "^2.1.0",
     "csvtojson": "^2.0.10",
     "file-saver": "^2.0.5",
     "fs": "^0.0.1-security",
