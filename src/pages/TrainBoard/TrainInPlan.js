@@ -10,6 +10,7 @@ import {
   playRelaxSound,
   playStartSound
 } from "../../utils";
+import Images from "../Sports/Images";
 
 
 const TrainInPlan = ({ sport, finish, play, no }) => {
@@ -77,6 +78,14 @@ const TrainInPlan = ({ sport, finish, play, no }) => {
       <div className="train-row">
         {no} {sport.name || ""}
       </div>
+      {!!sport.dec?.length&&
+        <div className="train-row">
+        {sport.dec}
+      </div>
+      }
+        {!!sport.imgList?.length&&
+       <Images fileList={sport.imgList} />
+      }
       <div className="train-row">
         每组运动时间：{min}m{sec}s
         <InputNumber value={min} onChange={(v) => setMin(v)}></InputNumber> m
@@ -87,17 +96,17 @@ const TrainInPlan = ({ sport, finish, play, no }) => {
         <InputNumber
           value={minStop}
           onChange={(v) => setMinStop(v)}
-        ></InputNumber>{" "}
+        ></InputNumber>
         m
         <InputNumber
           value={secStop}
           onChange={(v) => setSecStop(v)}
-        ></InputNumber>{" "}
+        ></InputNumber>
         s
       </div>
       <div className="train-row">
-        共{" "}
-        <InputNumber value={round} onChange={(v) => setRound(v)}></InputNumber>{" "}
+        共
+        <InputNumber value={round} onChange={(v) => setRound(v)}></InputNumber>
         组
       </div>
       <div className="train-row">

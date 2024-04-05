@@ -5,4 +5,10 @@
   align-items: center; /* Vertically center the items */
   justify-items: center; /* Horizontally center the items */
 }
+.imagesForShowRow{
 
+  display: flex;
+  .imageFrameForShow{
+    width: 80vw;
+}
+}

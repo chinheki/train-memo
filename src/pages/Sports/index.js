@@ -21,10 +21,13 @@ const SportsList = () => {
   const [editSport, setSport] = useState(null);
   const [checked, setChecked] = useState([]);
   const savePlan = (plan) => {
-    if (plan.id) {
-      update("sports", plan);
-    } else {
-      insert("sports", plan);
+    if (!!plan) {
+      console.log(plan)
+      if (plan.id) {
+        update("sports", plan);
+      } else {
+        insert("sports", plan);
+      }
     }
     setNewRow(false);
     setSport(null);

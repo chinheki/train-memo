@@ -4,11 +4,12 @@ import { Button, InputNumber, Input, Upload } from "antd";
 import UploadImages from "./UploadImages";
 import PartSelect from "./PartSelect";
 import { getMinAndSec, getTotalSeconds } from "../../utils";
+import { uploadImage } from "../../use-image-server";
 
 const timePattern = [
   ["自定义"],
   ["反复动作", 1, 0, 0, 30, 3],
- ["拉伸", 0, 20, 0, 10, 3],
+  ["拉伸", 0, 20, 0, 10, 3],
   ["保持姿势", 0, 30, 0, 30, 3]
 ];
 const SingleTrainPlan = ({ savePlan, sport }) => {
@@ -21,6 +22,7 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
   const [round, setRound] = useState(1);
   const [type, setType] = useState([]);
   const [pattern, setPattern] = useState(0);
+  const [fileList, setFileList] = useState([]);
   useEffect(() => {
     if (sport) {
       setName(sport.name);
@@ -30,14 +32,15 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
       setMinStop(getMinAndSec(sport?.relaxTime).minutes);
       setSecStop(getMinAndSec(sport?.relaxTime).seconds);
       setRound(sport.round);
-      console.log(sport.type);
+      setFileList(sport.imgList);
       setType(sport.type ?? []);
+      console.log(sport.imgList)
     }
   }, [sport]);
 
   const disableStart = useMemo(
-    () => (min <= 0 && sec <= 0) || round <= 0,
-    [min, sec, round]
+    () => (min <= 0 && sec <= 0) || round <= 0 || !name.length,
+    [min, sec, round,name]
   );
   const onPatternChange = useCallback(() => {
     if (pattern === timePattern.length - 1) {
@@ -51,7 +54,9 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
       setRound(timePattern[pattern + 1][5]);
     }
   }, [pattern]);
-  const save = useCallback(() => {
+  const save = useCallback(async () => {
+    const imgList = await uploadImage(fileList);
+
     savePlan({
       ...sport,
       name,
@@ -59,9 +64,10 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
       trainTime: getTotalSeconds(min, sec),
       relaxTime: getTotalSeconds(minStop, secStop),
       round,
-      type
+      type,
+      imgList
     });
-  }, [name, dec, min, sec, minStop, secStop, round, sport, type]);
+  }, [name, dec, min, sec, minStop, secStop, round, sport, type,fileList]);
   const onChangeName = (v) => {
     setName(v.target.value);
   };
@@ -88,7 +94,7 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
       </div>
       <div className="train-row">
         参考图片：
-        <UploadImages />
+        <UploadImages fileList={fileList} setFileList={setFileList} />
       </div>
       <div className="train-row">
         <Button onClick={onPatternChange}>
@@ -131,6 +137,7 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
         <Button onClick={save} disabled={disableStart}>
           保存
         </Button>
+        <Button onClick={() => savePlan()}>返回</Button>
       </div>
     </>
   );

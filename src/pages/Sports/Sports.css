@@ -8,3 +8,11 @@
   justify-items: center;
   /* Horizontally center the items */
 }
+
+.imagesForShowRow {
+  display: flex;
+}
+
+.imagesForShowRow .imageFrameForShow {
+  width: 80vw;
+}

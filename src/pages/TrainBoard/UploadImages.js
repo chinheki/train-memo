@@ -1,19 +1,10 @@
 import React, { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteTwoTone } from "@ant-design/icons";
 import { Button, Image, Upload } from "antd";
-import { updateMedia } from "../../use-local-storage";
 
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-const UploadImages = () => {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState([]);
+
+
+const UploadImages = ({fileList, setFileList}) => {
   const onUpload = async () => {
     const handle = await window.showOpenFilePicker({
       types: [
@@ -28,17 +19,22 @@ const UploadImages = () => {
       multiple: true
     });
     const file = await handle[0].getFile();
-    updateMedia(file);
+    const src = URL.createObjectURL(file);
+    setFileList((prev) => [...prev, { src, file }]);
+  };
+  const deleteImage = (image) => {
+    const updatedPreviewImage = fileList.filter((img) => 
+        img.src === image.src && !!img.file
+      ).map(
+      (img) => {
+        if (img.src === image.src && !img.file) {
+          return {...img,needDelete:true}
+        }
+      }
+    );
+    setFileList(updatedPreviewImage);
   };
 
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-  };
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
   const uploadButton = (
     <button
       style={{
@@ -52,6 +48,12 @@ const UploadImages = () => {
   );
   return (
     <>
+      {fileList.map((image, i) => (
+        <div className="imageFrame" onClick={() => deleteImage(image)}>
+          <DeleteTwoTone twoToneColor="brown" />
+          <img id={"frame-" + i} src={image.src} width="100px" height="100px" />
+        </div>
+      ))}
       <Button onClick={onUpload}>
         {fileList.length >= 8 ? null : uploadButton}
       </Button>

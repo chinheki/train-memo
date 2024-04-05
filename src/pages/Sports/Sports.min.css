@@ -1,1 +1,1 @@
-.sports-grid{display:grid;grid-template-columns:20px repeat(6, 1fr);grid-gap:10px;align-items:center;justify-items:center}
+.sports-grid{display:grid;grid-template-columns:20px repeat(6, 1fr);grid-gap:10px;align-items:center;justify-items:center}.imagesForShowRow{display:flex}.imagesForShowRow .imageFrameForShow{width:80vw}

@@ -33,7 +33,6 @@ const SingleTrain = () => {
             if (loopCount % 2 === 1) {
               if (relaxTime > 0) {
                 remainingTime = relaxTime; // Start new timer
-                console.log("finish one round");
                 playRelaxSound();
               } else {
                 remainingTime = 0; // Start new timer
