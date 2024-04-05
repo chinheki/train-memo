@@ -5,6 +5,8 @@ permissions:
   pull-requests: write # Necessary to comment on PRs
   contents: read
   packages: write
+  pages: write
+  id-token: write
 
 on:
   push:
