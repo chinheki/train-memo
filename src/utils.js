@@ -1,19 +1,16 @@
-import { converter } from 'json-2-csv';
-import csvtojson from 'csvtojson';
+import start from "../public/assets/sounds/start.mp3";
+import stop from "../public/assets/sounds/stop.mp3";
 
-export async function csv2Json(csvFilePaths) {
-  
-        const jsonObj = await csvtojson({ ignoreEmpty: true }).fromFile(
-          csvFilePaths
-  );
-  return jsonObj
+
+export function playRelaxSound() {
+  // Code to play the sound
+  // You can use the HTML5 Audio element or any other library to play the sound
+  const audio = new Audio(stop);
+  audio.play();
 }
-
-export async function jsonToCsv(data) {
-  const csv = await converter.json2csv(data, {
-  "field": "string", // required
-  "title": "string", // optional
-  "wildcardMatch": false, // optional - default: false
-  });
-  return csv
+export function playStartSound() {
+  // Code to play the sound
+  // You can use the HTML5 Audio element or any other library to play the sound
+  const audio = new Audio(start);
+  audio.play();
 }

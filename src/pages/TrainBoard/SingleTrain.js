@@ -1,8 +1,8 @@
 import React,{ useEffect,useState,useMemo } from "react";
 import "./TrainBoard.scss";
-import start from "../../../public/assets/sounds/start.mp3";
-import stop from "../../../public/assets/sounds/stop.mp3";
+
 import { Button, InputNumber } from "antd";
+import { playRelaxSound, playStartSound } from "../../utils";
 const SingleTrain = ({sport}) => {
   const [min, setMin] = useState(0);
   const [sec, setSec] = useState(0);
@@ -36,11 +36,9 @@ const SingleTrain = ({sport}) => {
               }
             } else {
               remainingTime = trainTime; // Start the first timer again
-        console.log('start new round')
               playStartSound();
             }
           } else {
-        console.log('finish')
               playRelaxSound();
             
       clearInterval(intervalId);
@@ -64,18 +62,7 @@ const SingleTrain = ({sport}) => {
   
 }
   const disableStart=useMemo(()=>(min<=0&&sec<=0)||round<=0,[min,sec,round])
-  function playRelaxSound() {
-    // Code to play the sound
-    // You can use the HTML5 Audio element or any other library to play the sound
-    const audio = new Audio(stop);
-audio.play();
-  }
-    function playStartSound() {
-    // Code to play the sound
-    // You can use the HTML5 Audio element or any other library to play the sound
-    const audio = new Audio(start);
-audio.play();
-  }
+
   return (
     <>
        <div className="train-row">
