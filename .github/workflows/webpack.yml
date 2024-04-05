@@ -41,12 +41,13 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
       with:
-        # Upload entire repository
+        name: github-pages
         path: 'build'
         token: ${{ secrets.REACT_APP_ISSUE_TOKEN }}
         # Deployment job
   deploy:
     environment:
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
