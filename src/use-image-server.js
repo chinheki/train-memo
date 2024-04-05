@@ -3,10 +3,7 @@ import axios from "axios";
 import { Octokit } from "@octokit/rest";
 import { v4 as uuidv4 } from 'uuid';
 
-const octokit = new Octokit({
-  auth: process.env.REACT_APP_ISSUE_TOKEN,
-  log: console
-});
+
 // change these values to create the test repository under your account
 const owner = "chinheki";
 const repo = "image-server";
@@ -19,7 +16,10 @@ const toBase64 = (file) =>
     reader.onerror = reject;
   });
 
-export async function uploadImage(files) {
+export async function uploadImage(files,token) {
+    const octokit = new Octokit({
+  auth: token,
+});
     const fileList = [];
     console.log(files)
   for (let i = 0; i < files.length; i++) {

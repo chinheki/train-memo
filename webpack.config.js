@@ -72,13 +72,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./index.html"
     }),
-    // new Dotenv(".env"),
      new webpack.DefinePlugin({
       'process.env': JSON.stringify(dotenv.parsed),
     }),
-      // new webpack.DefinePlugin({
-      //   'process.env.REACT_APP_ISSUE_TOKEN': JSON.stringify(env.REACT_APP_ISSUE_TOKEN),
-      // }),
   ],
   devServer: {
     static: {

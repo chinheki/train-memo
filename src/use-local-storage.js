@@ -2,25 +2,27 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Octokit } from "@octokit/core";
 import { IMAGE_SPLIT } from "./use-image-server";
-const octokit = new Octokit({
-  auth: process.env.REACT_APP_ISSUE_TOKEN
-});
+
 const SPLIT = "$$$";
 const LIST_SPLIT = ",";
 const useLocalStorage = () => {
+  const [token,setToken]=useState(null)
   const [data, setData] = useState({
     sports: [],
     works: [],
     status: []
   });
-
+  const updateToken = (v) => {
+    localStorage.setItem("train-memo-token", v)
+  setToken(v)
+}
   const fetchData = async () => {
     axios
       .get("https://api.github.com/repos/chinheki/train-memo/issues/comments", {
         headers: {
           Accept: "application/vnd.github+json",
           Authorization: {
-            access_token: process.env.REACT_APP_ISSUE_TOKEN,
+            access_token: token,
             scope: "repo,gist",
             token_type: "bearer"
           },
@@ -106,7 +108,7 @@ const useLocalStorage = () => {
           {
             headers: {
               Accept: "application/vnd.github+json",
-              Authorization: `Bearer ${process.env.REACT_APP_ISSUE_TOKEN}`,
+              Authorization: `Bearer ${token}`,
 
               "X-GitHub-Api-Version": "2022-11-28"
             }
@@ -154,7 +156,7 @@ const useLocalStorage = () => {
         {
           headers: {
             Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${process.env.REACT_APP_ISSUE_TOKEN}`,
+            Authorization: `Bearer ${token}`,
             "X-GitHub-Api-Version": "2022-11-28"
           }
         }
@@ -181,7 +183,7 @@ const useLocalStorage = () => {
         {
           headers: {
             Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${process.env.REACT_APP_ISSUE_TOKEN}`,
+            Authorization: `Bearer ${token}`,
             "X-GitHub-Api-Version": "2022-11-28"
           }
         }
@@ -199,10 +201,12 @@ const useLocalStorage = () => {
       });
   };
   useEffect(() => {
+    const token = localStorage.getItem("train-memo-token");
+    setToken(token);
     fetchData();
   }, []);
 
-  return { data, updateData, insertData, deleteData };
+  return { data, updateData, insertData, deleteData,token,updateToken };
 };
 
 export default useLocalStorage;

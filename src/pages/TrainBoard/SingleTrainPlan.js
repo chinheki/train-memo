@@ -1,16 +1,18 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback,useContext } from "react";
 import "./TrainBoard.scss";
 import { Button, InputNumber, Input, Upload } from "antd";
 import UploadImages from "./UploadImages";
 import PartSelect from "./PartSelect";
 import { getMinAndSec, getTotalSeconds } from "../../utils";
 import { uploadImage } from "../../use-image-server";
+import { DataContext } from "../../App";
 
 const timePattern = [
   ["自定义"],
   ["反复动作", 1, 0, 0, 30, 3],
   ["拉伸", 0, 20, 0, 10, 3],
-  ["保持姿势", 0, 30, 0, 30, 3]
+  ["保持姿势", 0, 30, 0, 30, 3],
+  ["泡沫轴", 1, 0, 0, 10, 1],
 ];
 const SingleTrainPlan = ({ savePlan, sport }) => {
   const [name, setName] = useState("");
@@ -23,6 +25,7 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
   const [type, setType] = useState([]);
   const [pattern, setPattern] = useState(0);
   const [fileList, setFileList] = useState([]);
+  const value= useContext(DataContext)
   useEffect(() => {
     if (sport) {
       setName(sport.name);
@@ -55,7 +58,7 @@ const SingleTrainPlan = ({ savePlan, sport }) => {
     }
   }, [pattern]);
   const save = useCallback(async () => {
-    const imgList = await uploadImage(fileList);
+    const imgList = await uploadImage(fileList,value?.token);
 
     savePlan({
       ...sport,

@@ -38,9 +38,6 @@ jobs:
       run: |
         npm install
         npm run build
-        ls
-        echo process.env.REACT_APP_ISSUE_TOKEN
-        echo ${{ secrets.REACT_APP_ISSUE_TOKEN }}
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
