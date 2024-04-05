@@ -5,9 +5,6 @@ import React, {
   useContext,
   useCallback
 } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Image, Upload } from "antd";
-import { updateMedia } from "../../use-local-storage";
 const options = [
   { name: "手腕", twoSide: true, checked: false },
   { name: "上臂", twoSide: true, checked: false },

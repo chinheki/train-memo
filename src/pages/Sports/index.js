@@ -119,12 +119,14 @@ const SportsList = () => {
           <div className="sport-row">
             <Button onClick={onRandomCheck}>随机选择</Button>
             <Button onClick={generatePlan} disabled={!checked.length}>
-              生成训练计划(共{randomTotalTime})
+            生成训练计划(共{randomTotalTime})
             </Button>
           </div>
         </div>
       )}
-      {newRow && <SingleTrainPlan savePlan={savePlan} sport={editSport} />}
+         {newRow && <div className="train-board">
+     <SingleTrainPlan savePlan={savePlan} sport={editSport} />
+        </div>}
     </>
   );
 };

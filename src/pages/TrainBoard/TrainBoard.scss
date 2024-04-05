@@ -8,6 +8,7 @@
     padding: 20px;
     z-index: 1;
     margin: auto;
+    max-width: 90%;
     padding: 16px;
     border-radius: 16px;
     gap: 16px;
@@ -56,16 +57,7 @@ button{
     width:100%;
 }
   }
-.weekly-train .dots {
-  height: 600px;
-  width: 750px;
-  background-size: contain;
-}
-.weekly-train .timer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 .part{
       background: antiquewhite;
     border-radius: 4px;

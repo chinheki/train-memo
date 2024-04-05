@@ -1,1 +1,1 @@
-.weekly-train{overflow-x:auto}.weekly-train .dots{height:600px;width:750px;background-size:contain}
+.train-board .status-board{max-width:100%;overflow-x:auto}.train-board .status-board .dots{height:600px;background-size:contain;background-position:center;background-repeat:no-repeat;overflow:hidden;width:100%;height:600px;background-size:900px;background-position:-40px -40px;background-repeat:no-repeat;width:900px}

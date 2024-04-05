@@ -215,11 +215,8 @@ export const updateMedia = async (file) => {
     .get("https://api.github.com/repos/chinheki/train-memo/releases/latest", {
       headers: {
         Accept: "application/vnd.github+json",
-        Authorization: {
-          access_token: process.env.REACT_APP_ISSUE_TOKEN,
-          scope: "repo,gist",
-          token_type: "bearer"
-        },
+            Authorization: `Bearer ${process.env.REACT_APP_ISSUE_TOKEN}`,
+        
         "X-GitHub-Api-Version": "2022-11-28"
       }
     })
@@ -230,15 +227,18 @@ export const updateMedia = async (file) => {
       return r.data;
     });
   console.log(result);
-  if (result.assets_url) {
+  if (result.upload_url) {
+
     const uploadRes = await axios
-      .post(`${result.assets_url}?name=${file.name}`, {
+      .patch(`${result.upload_url.split("{")[0]}?name=${file.name}`, 
         file,
+        {
         headers: {
           Accept: "application/vnd.github+json",
           Authorization: `Bearer ${process.env.REACT_APP_ISSUE_TOKEN}`,
           "Content-Type": file.type,
-          "X-GitHub-Api-Version": "2022-11-28"
+            "X-GitHub-Api-Version": "2022-11-28",
+          // "Content-Type": "application/octet-stream"
         }
       })
       .catch((e) => {
