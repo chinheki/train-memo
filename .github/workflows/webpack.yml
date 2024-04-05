@@ -30,7 +30,6 @@ jobs:
         npm install
         npm run build
         ll
-  deploy:
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
