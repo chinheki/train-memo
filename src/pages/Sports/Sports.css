@@ -7,6 +7,42 @@
   /* Vertically center the items */
   justify-items: center;
   /* Horizontally center the items */
+  overflow-y: auto;
+  height: 100%;
+  /* width */
+  /* Track */
+  /* Handle */
+  /* Handle on hover */
+}
+
+.sports-grid > div {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.sports-grid > div .part {
+  padding: 2px;
+  font-size: 12px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.sports-grid::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sports-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sports-grid::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #f1f1f1;
+  height: 20px;
+}
+
+.sports-grid::-webkit-scrollbar-thumb:hover {
+  background: #f1f1f1;
 }
 
 .imagesForShowRow {

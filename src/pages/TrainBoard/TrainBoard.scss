@@ -1,7 +1,7 @@
 .train-board {
   overflow-x: visible;
-  overflow-y: auto;
-  height: fit-content;
+  overflow-y: hidden;
+  height: min(fit-content, 100%);
   max-height: calc(100% - 100px);
   width: fit-content;
   border: solid 5px rgb(244, 164, 107, 1);
@@ -77,16 +77,7 @@
   gap: 2px !important;
 }
 .sports-grid {
-  > div {
-    display: inline-flex;
-    gap: 2px;
-    .part {
-      padding: 2px;
-      font-size: 12px;
-      user-select: none;
-      cursor: pointer;
-    }
-  }
+
 }
 
 .imageFrame {

@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -13,7 +15,7 @@ html, body, #root {
 
 #root * {
   z-index: 1;
-  font-family: 'Pixel';
+  font-family: "Pixel";
 }
 
 #root .content {
@@ -21,6 +23,7 @@ html, body, #root {
   width: 100%;
   flex: 1 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   position: relative;
 }
@@ -38,6 +41,6 @@ html, body, #root {
 }
 
 @font-face {
-  font-family: 'Pixel';
+  font-family: "Pixel";
   src: url("../public/assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf");
 }
