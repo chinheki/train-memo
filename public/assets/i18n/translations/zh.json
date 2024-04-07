@@ -1,7 +1,7 @@
 {
-    "sidebar.daily":"打卡",
-    "sidebar.command":"训练",
-    "sidebar.actions":"动作",
+    "sidebar.daily":"状态管理",
+    "sidebar.command":"开始健身",
+    "sidebar.actions":"训练项目",
     "header.search.placeholder":"查找动作",
     "header.signup":"Sign up",
     "header.login":"Login",

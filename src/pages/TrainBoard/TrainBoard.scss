@@ -11,7 +11,7 @@
   padding: 20px;
   z-index: 1;
   margin: auto;
-  max-width: 90%;
+  max-width: 80%;
   padding: 16px;
   border-radius: 16px;
   gap: 16px;
@@ -26,25 +26,93 @@
     align-items: center;
     width: 100%;
   }
+
   .train-row {
-    margin: auto;
-    width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    font-size: 32px;
+    font-size: 24px;
+    flex-wrap: wrap;
+    line-height: 1.5;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    > div {
+      display: flex;
+      gap: 4px;
+    }
+    &.small-text {
+      font-size: 14px;
+      text-wrap: wrap;
+    }
+    input,
+    textarea {
+    }
+    input[type="file"] {
+      opacity: 0;
+      width: 100%;
+      height: 24px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+    }
+    .custom-file-upload {
+      height: 24px;
+      width: fit-content;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
     button {
-      font-size: 32px;
-      height: 70px;
+      font-size: 24px;
+      height: fit-content;
       font-weight: bolder;
       background: burlywood;
+      text-wrap: wrap;
       color: antiquewhite;
       &:hover {
         color: brown !important;
         border-color: brown !important;
       }
+      &.cover-all-btn {
+        z-index: 999 !important;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        border: none;
+        left: 0;
+        border-radius: 0;
+        background-color: transparent;
+      }
+         &.cover-all-btn-mask {
+        background-color: #fff;
+        opacity: 0.5;
+        animation: textjump 1s infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
+  }
+  .space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: fit-content;
+    gap: 8px;
+  }
+  .center {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: fit-content;
+    gap: 8px;
+    width: 100%;
   }
 }
 .sport-row {
@@ -54,7 +122,7 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  font-size: 32px;
+  font-size: 24px;
   button {
     font-weight: bolder;
     width: 100%;
@@ -75,9 +143,6 @@
 }
 .no-gap {
   gap: 2px !important;
-}
-.sports-grid {
-
 }
 
 .imageFrame {
@@ -101,10 +166,25 @@
   }
   &:hover {
     .anticon {
-      display:inline-block !important;
+      display: inline-block !important;
     }
     img {
       filter: brightness(0.5);
     }
+  }
+}
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+@keyframes textjump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }

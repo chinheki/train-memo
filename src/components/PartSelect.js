@@ -5,6 +5,7 @@ import React, {
   useContext,
   useCallback
 } from "react";
+import { muscleMap } from "../pages/WeeklyTrain";
 const options = [
   { name: "手腕", twoSide: true, checked: false },
   { name: "上臂", twoSide: true, checked: false },
@@ -17,8 +18,9 @@ const options = [
   { name: "体力", twoSide: false, checked: false },
   { name: "拉伸", twoSide: false, checked: false }
 ];
-
+const proOptions=Object.keys(muscleMap).map((id)=>({name:muscleMap[id][1],twoSide:false,checked:false}))
 const PartSelect = ({ type, setType, view }) => {
+  const [op, setOp] = useState(options);
   const onClick = useCallback(
     (name, twoSide) => {
       const c = type.find((t) => t.name === name);

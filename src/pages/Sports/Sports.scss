@@ -16,27 +16,7 @@
       cursor: pointer;
     }
   }
-  /* width */
-&::-webkit-scrollbar {
-  width: 5px;
-
-}
-
-/* Track */
-&::-webkit-scrollbar-track {
-  background: transparent;
-}
-/* Handle */
-&::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: #f1f1f1;
-  height: 20px;
-}
-
-/* Handle on hover */
-&::-webkit-scrollbar-thumb:hover {
-  background: #f1f1f1;
-}
+ 
 }
 .imagesForShowRow{
 
@@ -44,4 +24,9 @@
   .imageFrameForShow{
     width: 80vw;
 }
+}
+.title{
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

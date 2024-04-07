@@ -5,6 +5,7 @@ import { CheckSquareOutlined, BarsOutlined, FireOutlined } from '@ant-design/ico
 import "./Sidebar.scss";
 import { useTranslation } from "react-i18next";
 import { redirect, Link } from "react-router-dom";
+import { useLocation } from "react-router";
 const items = (t) => [
   {
     label: <Link to={"/"}>{t("sidebar.command")}</Link>,
@@ -25,9 +26,12 @@ const items = (t) => [
 
 const Sidebar = () => {
   const { t } = useTranslation();
+  const location =useLocation();
+  
+  const defaultSelectedKeys=location.pathname.includes("week")?"daily":location.pathname.includes("sports")?"sports":"actions"
   return (
     <div className="sidebar">
-      <Menu items={items(t)} defaultSelectedKeys={["actions"]} mode="horizontal" />
+      <Menu items={items(t)} defaultSelectedKeys={[defaultSelectedKeys]} mode="horizontal" />
     </div>
   );
 };

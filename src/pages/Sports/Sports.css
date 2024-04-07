@@ -9,10 +9,6 @@
   /* Horizontally center the items */
   overflow-y: auto;
   height: 100%;
-  /* width */
-  /* Track */
-  /* Handle */
-  /* Handle on hover */
 }
 
 .sports-grid > div {
@@ -27,28 +23,16 @@
   cursor: pointer;
 }
 
-.sports-grid::-webkit-scrollbar {
-  width: 5px;
-}
-
-.sports-grid::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sports-grid::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: #f1f1f1;
-  height: 20px;
-}
-
-.sports-grid::-webkit-scrollbar-thumb:hover {
-  background: #f1f1f1;
-}
-
 .imagesForShowRow {
   display: flex;
 }
 
 .imagesForShowRow .imageFrameForShow {
   width: 80vw;
+}
+
+.title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

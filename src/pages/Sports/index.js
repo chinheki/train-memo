@@ -8,10 +8,11 @@ import React, {
 import "./Sports.scss";
 import { Button, Checkbox, InputNumber } from "antd";
 import { DataContext, TrainContext, UpdateDataContext } from "../../App";
-import SingleTrainPlan from "../TrainBoard/SingleTrainPlan";
-import PartSelect from "../TrainBoard/PartSelect";
+import PartSelect from "../../components/PartSelect";
 import { redirect, Link } from "react-router-dom";
 import { useNavigate } from "react-router";
+import TrainTimePlan from "../../components/TrainTimePlan";
+const columnPattern = ["锻炼部位", "训练模式", "训练时长", "操作"];
 const SportsList = () => {
   const data = useContext(DataContext);
   const plan = useContext(TrainContext);
@@ -20,15 +21,8 @@ const SportsList = () => {
   const [newRow, setNewRow] = useState(false);
   const [editSport, setSport] = useState(null);
   const [checked, setChecked] = useState([]);
-  const savePlan = (plan) => {
-    if (!!plan) {
-      console.log(plan)
-      if (plan.id) {
-        update("sports", plan);
-      } else {
-        insert("sports", plan);
-      }
-    }
+  const [pattern, setPattern] = useState(0);
+  const afterSavePlan = () => {
     setNewRow(false);
     setSport(null);
   };
@@ -39,6 +33,7 @@ const SportsList = () => {
   const onDelete = (plan) => {
     remove("sports", plan.id);
   };
+  const mobile = useMemo(() => window.innerWidth < 800, [window.innerWidth]);
   const randomTotalTime = useMemo(() => {
     let totalTime = 0;
     checked.forEach((id) => {
@@ -81,21 +76,64 @@ const SportsList = () => {
     },
     [data?.sports]
   );
+  const onCheckAllChange = useCallback(
+    (v) => {
+      if (v.target.checked || v.target.aria - checked) {
+        setChecked(data?.sports.map((s) => s.id) || []);
+      } else {
+        setChecked([]);
+      }
+    },
+    [indeterminate, checkAll, data?.sports]
+  );
+  const checkAll = useMemo(
+    () => checked.length === data?.sports.length,
+    [checked, data?.sports]
+  );
+  const indeterminate = useMemo(
+    () => checked.length > 0 && checked.length < data?.sports.length,
+    [checked, data?.sports]
+  );
   const generatePlan = useCallback(() => {
     plan.updateTrainList(
       checked
-      .map((id) => (data?.sports || []).find((s) => s.id === id))
-      .filter((d) => !!d)
-      );
-      navigate("/");
-  }, [checked, plan, data?.sports,redirect]);
+        .map((id) => (data?.sports || []).find((s) => s.id === id))
+        .filter((d) => !!d)
+    );
+    navigate("/");
+  }, [checked, plan, data?.sports, redirect]);
   return (
     <>
       {!newRow && (
         <div className="train-board">
-          <div className="train-row">训练项目</div>
-          <div className="train-row">---------------</div>
-          <div className="sports-grid">
+          <div className="space-between">
+            <Checkbox
+              indeterminate={indeterminate}
+              onChange={onCheckAllChange}
+              checked={checkAll}
+            >
+              全选
+            </Checkbox>
+            {!!mobile && (
+              <Button
+                onClick={() =>
+                  setPattern((prev) =>
+                    prev === columnPattern.length - 1 ? 0 : prev + 1
+                  )
+                }
+              >
+                {columnPattern[pattern]}
+              </Button>
+            )}
+          </div>
+          <div
+            className="sports-grid scroll"
+            style={{
+              gridTemplateColumns: mobile
+                ? "20px repeat(2, 1fr)"
+                : "20px repeat(5, 1fr)"
+            }}
+          >
             {(data?.sports ?? []).map((s) => (
               <>
                 <Checkbox
@@ -103,16 +141,25 @@ const SportsList = () => {
                   checked={checked.includes(s.id)}
                 ></Checkbox>
                 <div> {s.name}</div>
-                <div>
-                  <PartSelect type={s.type} view />
-                </div>
-                <div> {formatTime(s.trainTime, s.round)}</div>
-                <div>
-                  {" "}
-                  {calculateTotalTime(s.trainTime, s.relaxTime, s.round)}
-                </div>
-                <Button onClick={() => onEdit(s)}>更新</Button>
-                <Button onClick={() => onDelete(s)}>刪除</Button>
+                {(!mobile || pattern === 0) && (
+                  <div>
+                    <PartSelect type={s.type} view />
+                  </div>
+                )}
+                {(!mobile || pattern === 1) && (
+                  <div> {formatTime(s.trainTime, s.round)}</div>
+                )}
+                {(!mobile || pattern === 2) && (
+                  <div>
+                    {calculateTotalTime(s.trainTime, s.relaxTime, s.round)}
+                  </div>
+                )}
+                {(!mobile || pattern === 3) && (
+                  <div>
+                    <Button onClick={() => onEdit(s)}>更新</Button>
+                    <Button onClick={() => onDelete(s)}>刪除</Button>
+                  </div>
+                )}
               </>
             ))}
           </div>
@@ -122,14 +169,12 @@ const SportsList = () => {
           <div className="sport-row">
             <Button onClick={onRandomCheck}>随机选择</Button>
             <Button onClick={generatePlan} disabled={!checked.length}>
-            生成训练计划(共{randomTotalTime})
+              生成训练计划(共{randomTotalTime})
             </Button>
           </div>
         </div>
       )}
-         {newRow && <div className="train-board">
-     <SingleTrainPlan savePlan={savePlan} sport={editSport} />
-        </div>}
+      {newRow && <TrainTimePlan afterSavePlan={afterSavePlan} sport={editSport}  />}
     </>
   );
 };
