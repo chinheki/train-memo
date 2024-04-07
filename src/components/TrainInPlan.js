@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import { Button, InputNumber } from "antd";
 import {
   getTimeList,
@@ -9,24 +9,17 @@ import {
 } from "../utils";
 import Images from "./Images";
 import TrainTimer from "./TrainTimer";
+import { TrainContext } from "../App";
 
 const TrainInPlan = ({ sports }) => {
-  const [sport, setSport] = useState((sports||[])[0]);
-  const [index, setIndex] = useState(0);
-    const no = useMemo(() => {
-    return `${index + 1}/${sports.length}`;
-  }, [index, sports]);
+  const plan = useContext(TrainContext);
 
-  
-    const timeList = useMemo(() => {
-  return getTimeList(sports||[]);
-},[sports])
+  const timeList = useMemo(() => {
+    return getTimeList(sports || [], plan?.gapTime ?? 0);
+  }, [sports, plan?.gapTime]);
   return (
-    <div className="train-board" style={{height:"100%"}}>
+    <div className="train-board" style={{ height: "100%" }}>
       <TrainTimer timeList={timeList} />
-    <div className="train-show">
-        <Images fileList={sport.imgList ?? []} dec={ sport.dec} />
-    </div>
     </div>
   );
 };

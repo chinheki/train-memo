@@ -111,7 +111,7 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
     [min, sec, round]
   );
   const timeList = useMemo(() => {
-    return getTimeList([{name:"自主训练", trainTime: getTotalSeconds(min, sec), relaxTime: getTotalSeconds(minStop, secStop), round }]);
+    return getTimeList([{name:"自主训练", trainTime: getTotalSeconds(min, sec), relaxTime: getTotalSeconds(minStop, secStop), round }],0);
 },[min,sec,minStop,secStop,round])
   return (
     <div className="train-board center scroll">

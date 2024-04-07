@@ -8,6 +8,7 @@ import {
   playStartSound
 } from "../utils";
 import Timer from "./Timer";
+import Images from "./Images";
 const TrainTimer = ({ timeList}) => {
   const [time, setTime] = useState(timeList[0]?.time ?? 0);
   const [timer, setTimer] = useState(false);
@@ -70,6 +71,7 @@ const TrainTimer = ({ timeList}) => {
           </Button>
         )}
       </div>
+        <Images fileList={timeList[turn].imgList ?? []} dec={timeList[turn].dec} />
     </>
   );
 };

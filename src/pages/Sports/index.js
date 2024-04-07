@@ -12,6 +12,7 @@ import PartSelect from "../../components/PartSelect";
 import { redirect, Link } from "react-router-dom";
 import { useNavigate } from "react-router";
 import TrainTimePlan from "../../components/TrainTimePlan";
+import { shuffleList } from "../../utils";
 const columnPattern = ["锻炼部位", "训练模式", "训练时长", "操作"];
 const SportsList = () => {
   const data = useContext(DataContext);
@@ -42,8 +43,10 @@ const SportsList = () => {
         totalTime += calcTotalTime(sport);
       }
     });
+    totalTime +=
+      (plan?.gapTime ?? 0) * (checked.length - 1 > 0 ? checked.length : 0);
     return calculateTotalTime(totalTime, 0, 1);
-  }, [checked, data?.sport]);
+  }, [checked, data?.sport, plan?.gaptime]);
   const onCheck = useCallback(
     (id) => {
       if (checked.includes(id)) {
@@ -54,27 +57,26 @@ const SportsList = () => {
     },
     [checked]
   );
+
   const onRandomCheck = useCallback(
-    (id) => {
-      const sportList = data?.sports || [];
+    () => {
+      const sportList =
+        data?.sports.map((s) => ({ id: s.id, time: calcTotalTime(s) })) || [];
       const selectedSports = [];
       let totalTime = 0;
-
-      while (totalTime < 15 * 60 || totalTime > 20 * 60) {
-        selectedSports.length = 0;
-        totalTime = 0;
-
-        for (let i = 0; i < sportList.length; i++) {
-          if (Math.random() < 0.5) {
-            selectedSports.push(sportList[i]);
-            totalTime += calcTotalTime(sportList[i]);
-          }
+      const newList = shuffleList(sportList);
+      for (let i = 0; i < newList.length; i++) {
+        if (totalTime > 20 * 60) break;
+        if (i > 0) {
+          totalTime += plan?.gapTime ?? 0;
         }
+        selectedSports.push(newList[i].id);
+        totalTime += newList[i].time;
       }
 
-      setChecked(selectedSports.map((sport) => sport.id));
+      setChecked(selectedSports);
     },
-    [data?.sports]
+    [data?.sports, plan?.gapTime]
   );
   const onCheckAllChange = useCallback(
     (v) => {
@@ -174,7 +176,9 @@ const SportsList = () => {
           </div>
         </div>
       )}
-      {newRow && <TrainTimePlan afterSavePlan={afterSavePlan} sport={editSport}  />}
+      {newRow && (
+        <TrainTimePlan afterSavePlan={afterSavePlan} sport={editSport} />
+      )}
     </>
   );
 };

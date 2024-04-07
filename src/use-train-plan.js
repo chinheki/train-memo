@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 const useTrainPlan = () => {
     const [trainList, setTrainList] = useState([]);
+    const [gapTime, setGapTime] = useState(30);
 
     const updateTrainList = (newTrainList) => {
         console.log(newTrainList)
@@ -10,7 +11,7 @@ const useTrainPlan = () => {
 
     return {
         updateTrainList,
-        trainList,
+        trainList,gapTime
     };
 };
 

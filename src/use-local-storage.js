@@ -18,7 +18,7 @@ const useLocalStorage = () => {
 }
   const fetchData = async () => {
     axios
-      .get("https://api.github.com/repos/chinheki/train-memo/issues/comments", {
+      .get("https://api.github.com/repos/chinheki/train-memo/issues/comments?per_page=100", {
         headers: {
           Accept: "application/vnd.github+json",
           Authorization: {

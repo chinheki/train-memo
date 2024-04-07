@@ -32,21 +32,29 @@ export function getTimerStringBySeconds(seconds) {
   const formattedTime = `${padZero(minute)}:${padZero(second)}`;
   return formattedTime;
 }
-const gapTime = 5;
-export function getTimeList(list) {
+export function getTimeList(list,gapTime) {
   const timeList = [];
   for (let i = 0; i < list.length; i++){
-    const { trainTime, relaxTime, round,name } = list[i];
+    const { trainTime, relaxTime, round,name,imgList,dec } = list[i];
     if (i !== 0) {
-      timeList.push({ time: gapTime, type: "gap",turn:`1/${round}`,prex:`即将开始：${i+1}/${list.length+1} ${name} 1/${round}`})
+      timeList.push({imgList,dec , time: gapTime, type: "gap",turn:`1/${round}`,prex:`即将开始：${i+1}/${list.length+1} ${name} 1/${round}`})
     }
     for (let i2 = 0; i2 < round; i2++) {
-      timeList.push({ time: trainTime, type: "train",turn:`${i2+1}/${round}`,prex:`训练中：${i+1}/${list.length+1} ${name} ${i2+1}/${round}` });
+      timeList.push({imgList,dec , time: trainTime, type: "train",turn:`${i2+1}/${round}`,prex:`训练中：${i+1}/${list.length+1} ${name} ${i2+1}/${round}` });
       if (i2 !== round - 1 && relaxTime >0) {
-        timeList.push({ time: relaxTime, type: "relax",turn:`${i2+2}/${round}`,prex:`休息中：${i+1}/${list.length+1} ${name} ${i2+2}/${round}` });
+        timeList.push({ imgList,dec ,time: relaxTime, type: "relax",turn:`${i2+2}/${round}`,prex:`休息中：${i+1}/${list.length+1} ${name} ${i2+2}/${round}` });
       }
     }
   }
   console.log(timeList)
   return timeList;
 }
+
+ export const shuffleList = (list) => {
+    const shuffledList = [...list];
+    for (let i = shuffledList.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
+   }
+   return shuffledList
+  };
