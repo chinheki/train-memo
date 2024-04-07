@@ -5,6 +5,7 @@ import React, {
   useContext,
   useCallback
 } from "react";
+import { Button, InputNumber,Input } from "antd";
 import { muscleMap } from "../pages/WeeklyTrain";
 const options = [
   { name: "手腕", twoSide: true, checked: false },
@@ -20,7 +21,8 @@ const options = [
 ];
 const proOptions=Object.keys(muscleMap).map((id)=>({name:muscleMap[id][1],twoSide:false,checked:false}))
 const PartSelect = ({ type, setType, view }) => {
-  const [op, setOp] = useState(options);
+  const [pro, setPro] = useState(true);
+  const op=useMemo(()=>view?([...proOptions,...options]):pro?proOptions:options,[pro,view])
   const onClick = useCallback(
     (name, twoSide) => {
       const c = type.find((t) => t.name === name);
@@ -35,15 +37,20 @@ const PartSelect = ({ type, setType, view }) => {
           );
         }
       } else {
-        const add = options.find((t) => t.name === name);
+        const add = op.find((t) => t.name === name);
         setType([...type, { ...add, checked: true, useBothSide: add.twoSide }]);
       }
     },
-    [type]
+    [type,op]
   );
   return (
     <>
-      {options.map(({ name, twoSide }) => {
+      {!view&&
+      <Button onClick={()=>setPro(prev=>!prev)}>
+          ({pro?"肌肉部位":"大致部位"})
+        </Button>
+      }
+      {op.map(({ name, twoSide }) => {
         const c = type.find((t) => t.name === name);
         return !view || !!c ? (
           <div

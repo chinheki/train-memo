@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Button, InputNumber } from "antd";
 import {
-  getMinAndSec,
   getTimeList,
   getTimerStringBySeconds,
   getTotalSeconds,
@@ -23,10 +22,11 @@ const TrainInPlan = ({ sports }) => {
   return getTimeList(sports||[]);
 },[sports])
   return (
-    <div className="train-board">
+    <div className="train-board" style={{height:"100%"}}>
       <TrainTimer timeList={timeList} />
-      {!!sport.imgList?.length && <Images fileList={sport.imgList} />}
-      {!!sport.dec?.length && <div className="train-row">{sport.dec}</div>}
+    <div className="train-show">
+        <Images fileList={sport.imgList ?? []} dec={ sport.dec} />
+    </div>
     </div>
   );
 };

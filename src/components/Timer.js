@@ -62,13 +62,13 @@ const Timer = ({ during, play, onEnd, canSkip, prex }) => {
       </div>
      
       {!stop && canSkip && (
-        <div className="train-row">
+        <div className="train-row small-text">
           点击任意地方跳过休息时间
          {play&& <Button onClick={resetTimer} className="cover-all-btn"></Button>}
         </div>
       )}
       {!canSkip && !stop && (
-        <div className="train-row">
+        <div className="train-row small-text">
           点击任意地方暂停倒计时
           {play&&<Button onClick={stopTimer} className="cover-all-btn"></Button>}
         </div>

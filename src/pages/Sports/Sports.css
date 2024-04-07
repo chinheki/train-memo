@@ -23,14 +23,6 @@
   cursor: pointer;
 }
 
-.imagesForShowRow {
-  display: flex;
-}
-
-.imagesForShowRow .imageFrameForShow {
-  width: 80vw;
-}
-
 .title {
   width: 100%;
   display: flex;

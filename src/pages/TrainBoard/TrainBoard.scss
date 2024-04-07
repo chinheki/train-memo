@@ -46,9 +46,7 @@
       font-size: 14px;
       text-wrap: wrap;
     }
-    input,
-    textarea {
-    }
+
     input[type="file"] {
       opacity: 0;
       width: 100%;
@@ -89,7 +87,7 @@
         border-radius: 0;
         background-color: transparent;
       }
-         &.cover-all-btn-mask {
+      &.cover-all-btn-mask {
         background-color: #fff;
         opacity: 0.5;
         animation: textjump 1s infinite;
@@ -187,4 +185,22 @@
   100% {
     transform: scale(1);
   }
+}
+.train-show {
+  display: flex;
+  align-items: center;
+  font-size: 32px;
+  height: 100%;
+  flex-direction: column;
+justify-content: flex-start;
+   .imagesForShowRow {
+    height: calc(100% -  70px);
+    display: flex;
+    justify-content: center;
+    img{
+      height: 100%;
+      max-height: 100%;
+    }
+  }
+
 }
