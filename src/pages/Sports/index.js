@@ -6,7 +6,7 @@ import React, {
   useCallback
 } from "react";
 import "./Sports.scss";
-import { Button, Checkbox, InputNumber } from "antd";
+import { Button, Checkbox, Select } from "antd";
 import { DataContext, TrainContext, UpdateDataContext } from "../../App";
 import PartSelect from "../../components/PartSelect";
 import { redirect, Link } from "react-router-dom";
@@ -14,7 +14,9 @@ import { useNavigate } from "react-router";
 import TrainTimePlan from "../../components/TrainTimePlan";
 import { shuffleList } from "../../utils";
 import { deleteImage } from "../../use-image-server";
+import { bodyPartList, muscleList } from "../WeeklyTrain";
 const columnPattern = ["锻炼部位", "训练模式", "训练时长", "操作"];
+const partOption=[...bodyPartList,...muscleList]
 const SportsList = () => {
   const data = useContext(DataContext);
   const plan = useContext(TrainContext);
@@ -24,6 +26,11 @@ const SportsList = () => {
   const [editSport, setSport] = useState(null);
   const [checked, setChecked] = useState([]);
   const [pattern, setPattern] = useState(0);
+  const [filter,setFilter]=useState({type:[]})
+  const [lan, setLan] = useState(0);
+  const handleChange = (value) => {
+    setFilter(prev=>({...prev,type:value}))
+  }
   const afterSavePlan = () => {
     setNewRow(false);
     setSport(null);
@@ -37,10 +44,12 @@ const SportsList = () => {
     remove("sports", plan.id);
   };
   const mobile = useMemo(() => window.innerWidth < 800, [window.innerWidth]);
+
+  const filterList=useMemo(()=>(data?.sports||[]).filter((s)=>!filter.type.length||filter.type.some(p=>s.type.some(t=>t.id===p))),[data?.sports,filter])
   const randomTotalTime = useMemo(() => {
     let totalTime = 0;
     checked.forEach((id) => {
-      const sport = (data?.sports || []).find((s) => s.id === id);
+      const sport = (filterList || []).find((s) => s.id === id);
       if (sport) {
         totalTime += calcTotalTime(sport);
       }
@@ -48,7 +57,7 @@ const SportsList = () => {
     totalTime +=
       (plan?.gapTime ?? 0) * (checked.length - 1 > 0 ? checked.length : 0);
     return calculateTotalTime(totalTime, 0, 1);
-  }, [checked, data?.sport, plan?.gaptime]);
+  }, [checked, filterList, plan?.gaptime]);
   const onCheck = useCallback(
     (id) => {
       if (checked.includes(id)) {
@@ -63,7 +72,7 @@ const SportsList = () => {
   const onRandomCheck = useCallback(
     () => {
       const sportList =
-        data?.sports.map((s) => ({ id: s.id, time: calcTotalTime(s) })) || [];
+        filterList.map((s) => ({ id: s.id, time: calcTotalTime(s) })) || [];
       const selectedSports = [];
       let totalTime = 0;
       const newList = shuffleList(sportList);
@@ -78,34 +87,34 @@ const SportsList = () => {
 
       setChecked(selectedSports);
     },
-    [data?.sports, plan?.gapTime]
+    [filterList, plan?.gapTime]
   );
   const onCheckAllChange = useCallback(
     (v) => {
       if (v.target.checked || v.target.aria - checked) {
-        setChecked(data?.sports.map((s) => s.id) || []);
+        setChecked(filterList.map((s) => s.id) || []);
       } else {
         setChecked([]);
       }
     },
-    [indeterminate, checkAll, data?.sports]
+    [indeterminate, checkAll, filterList]
   );
   const checkAll = useMemo(
-    () => checked.length === data?.sports.length,
-    [checked, data?.sports]
+    () => checked.length === filterList.length,
+    [checked, filterList]
   );
   const indeterminate = useMemo(
-    () => checked.length > 0 && checked.length < data?.sports.length,
-    [checked, data?.sports]
+    () => checked.length > 0 && checked.length < filterList.length,
+    [checked, filterList]
   );
   const generatePlan = useCallback(() => {
     plan.updateTrainList(
       checked
-        .map((id) => (data?.sports || []).find((s) => s.id === id))
+        .map((id) => (filterList || []).find((s) => s.id === id))
         .filter((d) => !!d)
     );
     navigate("/");
-  }, [checked, plan, data?.sports, redirect]);
+  }, [checked, plan, filterList, redirect]);
   return (
     <>
       {!newRow && (
@@ -118,6 +127,22 @@ const SportsList = () => {
             >
               全选
             </Checkbox>
+            <Select
+      mode="multiple"
+      allowClear
+      style={{ width: '100%' }}
+      placeholder="筛选健身部位"
+      defaultValue={[]}
+      onChange={handleChange}
+            >
+              {partOption.map(({ en, ch, jp, id }) => (
+                <Select.Option key={id} value={id}>
+                  {lan===0?ch:lan===1?en:jp}
+                </Select.Option>
+              
+              ))}
+
+    </Select>
             {!!mobile && (
               <Button
                 onClick={() =>
@@ -138,7 +163,7 @@ const SportsList = () => {
                 : "20px repeat(5, 1fr)"
             }}
           >
-            {(data?.sports ?? []).map((s) => (
+            {filterList.map((s) => (
               <>
                 <Checkbox
                   onChange={() => onCheck(s.id)}
