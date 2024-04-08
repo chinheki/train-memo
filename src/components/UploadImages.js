@@ -45,11 +45,12 @@ const UploadImages = ({ fileList, setFileList }) => {
   };
   const deleteImage = (image) => {
     const updatedPreviewImage = fileList
-      .filter((img) => img.src === image.src && !!img.file)
+      .filter((img) => !(img.src === image.src && !!img.file))
       .map((img) => {
         if (img.src === image.src && !img.file) {
           return { ...img, needDelete: true };
         }
+        return img
       });
     setFileList(updatedPreviewImage);
   };
@@ -69,21 +70,15 @@ const UploadImages = ({ fileList, setFileList }) => {
           ></input>
         </label>
       </div>
-      <div className="train-row  space-between">
+      <div className="train-row  space-between" style={{    flexWrap: "nowrap"}}>
         手动输入图片地址：
         <Input
           onChange={(e) => setUrl(e.target.value)}
           value={url}
-          style={{ width: "fit-content" }}
+          style={{ width: "100%" }}
         ></Input>
         <Button
-          style={{
-            background: "none",
-            border: "none",
-            padding: 0,
-            fontSize: "20px",
-            width: "fit-content"
-          }}
+          className="simple-btn"
           onClick={() => {
             setFileList((prev) => [...prev, { src: url }]);
             setUrl("");
@@ -94,7 +89,7 @@ const UploadImages = ({ fileList, setFileList }) => {
       </div>
       <div className="train-row">
         {fileList.map((image, i) => (
-          <div className="imageFrame" onClick={() => deleteImage(image)}>
+          !image.needDelete?<div className="imageFrame" onClick={() => deleteImage(image)}>
             <DeleteTwoTone twoToneColor="brown" />
             <img
               id={"frame-" + i}
@@ -102,7 +97,7 @@ const UploadImages = ({ fileList, setFileList }) => {
               width="100px"
               height="100px"
             />
-          </div>
+          </div>:null
         ))}
       </div>
     </>

@@ -13,6 +13,7 @@ import { redirect, Link } from "react-router-dom";
 import { useNavigate } from "react-router";
 import TrainTimePlan from "../../components/TrainTimePlan";
 import { shuffleList } from "../../utils";
+import { deleteImage } from "../../use-image-server";
 const columnPattern = ["锻炼部位", "训练模式", "训练时长", "操作"];
 const SportsList = () => {
   const data = useContext(DataContext);
@@ -32,6 +33,7 @@ const SportsList = () => {
     setNewRow(true);
   };
   const onDelete = (plan) => {
+      plan.imgList.forEach((f)=>deleteImage(f))
     remove("sports", plan.id);
   };
   const mobile = useMemo(() => window.innerWidth < 800, [window.innerWidth]);

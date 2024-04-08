@@ -5,63 +5,95 @@ import React, {
   useContext,
   useCallback
 } from "react";
-import { Button, InputNumber,Input } from "antd";
-import { muscleMap } from "../pages/WeeklyTrain";
-const options = [
-  { name: "手腕", twoSide: true, checked: false },
-  { name: "上臂", twoSide: true, checked: false },
-  { name: "小臂", twoSide: true, checked: false },
-  { name: "腰", twoSide: false, checked: false },
-  { name: "背", twoSide: false, checked: false },
-  { name: "胸", twoSide: false, checked: false },
-  { name: "腿", twoSide: true, checked: false },
-  { name: "躯干", twoSide: false, checked: false },
-  { name: "体力", twoSide: false, checked: false },
-  { name: "拉伸", twoSide: false, checked: false }
-];
-const proOptions=Object.keys(muscleMap).map((id)=>({name:muscleMap[id][1],twoSide:false,checked:false}))
+import { Button, InputNumber, Input } from "antd";
+import { bodyPartList, muscleList } from "../pages/WeeklyTrain";
+
+const bodyOptions = bodyPartList.map(({ id, ch, jp, en, useTwoSide }) => ({
+  id,
+  ch,
+  jp,
+  en,
+  useTwoSide,
+  checked: false
+}));
+const proOptions = muscleList.map(({ id, ch, jp, en, useTwoSide }) => ({
+  id,
+  ch,
+  jp,
+  en,
+  useTwoSide,
+  checked: false
+}));
 const PartSelect = ({ type, setType, view }) => {
-  const [pro, setPro] = useState(true);
-  const op=useMemo(()=>view?([...proOptions,...options]):pro?proOptions:options,[pro,view])
+  const [pro, setPro] = useState(false);
+  const [lan, setLan] = useState(0);
+  const op = useMemo(
+    () =>
+    view ? [...proOptions, ...bodyOptions] : pro ? proOptions : bodyOptions,
+    [pro, view]
+  );
+  console.log(type)
+  console.log(op)
   const onClick = useCallback(
-    (name, twoSide) => {
-      const c = type.find((t) => t.name === name);
-      if (c) {
-        if (!twoSide || !c.useBothSide) {
-          setType(type.filter((t) => t.name !== name));
+    (id, useTwoSide) => {
+      const checked = type.find((t) => t.id === id);
+      if (checked) {
+        if (!useTwoSide || !checked.useBothSide) {
+          setType(type.filter((t) => t.id != id));
         } else {
           setType(
-            type.map((t) =>
-              t.name === name ? { ...t, useBothSide: false } : t
-            )
+            type.map((t) => (t.id === id ? { ...t, useBothSide: false } : t))
           );
         }
       } else {
-        const add = op.find((t) => t.name === name);
-        setType([...type, { ...add, checked: true, useBothSide: add.twoSide }]);
+        const add = op.find((t) => t.id === id);
+        setType([
+          ...type,
+          { id: add.id, checked: true, useBothSide: useTwoSide }
+        ]);
       }
     },
-    [type,op]
+    [type, op]
   );
   return (
     <>
-      {!view&&
-      <Button onClick={()=>setPro(prev=>!prev)}>
-          ({pro?"肌肉部位":"大致部位"})
-        </Button>
-      }
-      {op.map(({ name, twoSide }) => {
-        const c = type.find((t) => t.name === name);
-        return !view || !!c ? (
-          <div
-            onClick={() => onClick(name, twoSide)}
-            className={`part${!!c ? " checked" : ""}`}
-          >
-            {name}
-            {!!c && twoSide ? (c.useBothSide ? "(左右)" : "(单侧)") : ""}
+      {!view && (
+        <div className="train-row  space-between">
+          训练部位：
+          <div>
+            <Button
+              onClick={() => setPro((prev) => !prev)}
+              className="simple-btn"
+            >
+              ({pro ? "肌肉部位" : "身体部位"})
+            </Button>
+            <Button
+              onClick={() => setLan((prev) => (prev < 2 ? prev + 1 : 0))}
+              className="simple-btn"
+            >
+              ({lan === 0 ? "中文" : lan === 2 ? "日文" : "英文"})
+            </Button>
           </div>
-        ) : null;
-      })}
+        </div>
+      )}
+      <div className="train-row" style={{ justifyContent: "flex-start" }}>
+        {op.map(({ ch, jp, en, useTwoSide, id }) => {
+          const dataType = type.find((t) => t.id === id);
+          return !view || !!dataType ? (
+            <div
+              onClick={() => onClick(id, useTwoSide)}
+              className={`part${!!dataType ? " checked" : ""}`}
+            >
+              {lan === 0 ? ch : lan === 2 ? jp : en}
+              {!!dataType && useTwoSide
+                ? dataType.useBothSide
+                  ? "(左右)"
+                  : "(单侧)"
+                : ""}
+            </div>
+          ) : null;
+        })}
+      </div>
     </>
   );
 };

@@ -1,11 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import "./Dot.scss";
 
 const Dot = ({lan, value:{en, ch, jp,left,top} }) => {
-  const [done, setDone] = useState(false);
-  const onClick = () => {
-  };
  
 
   return (

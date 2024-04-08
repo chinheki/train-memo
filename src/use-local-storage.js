@@ -1,34 +1,39 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Octokit } from "@octokit/core";
 import { IMAGE_SPLIT } from "./use-image-server";
-
+import { Octokit } from "@octokit/rest";
+import { owner, repo } from "./use-image-server";
+import { v4 as uuidv4 } from "uuid";
 const SPLIT = "$$$";
 const LIST_SPLIT = ",";
 const useLocalStorage = () => {
-  const [token,setToken]=useState(null)
+  const [token, setToken] = useState(null);
   const [data, setData] = useState({
     sports: [],
     works: [],
     status: []
   });
+
   const updateToken = (v) => {
-    localStorage.setItem("train-memo-token", v)
-  setToken(v)
-}
+    localStorage.setItem("train-memo-token", v);
+    setToken(v);
+  };
   const fetchData = async () => {
     axios
-      .get("https://api.github.com/repos/chinheki/train-memo/issues/comments?per_page=100", {
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: {
-            access_token: token,
-            scope: "repo,gist",
-            token_type: "bearer"
-          },
-          "X-GitHub-Api-Version": "2022-11-28"
+      .get(
+        "https://api.github.com/repos/chinheki/train-memo/issues/comments?per_page=100",
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: {
+              access_token: token,
+              scope: "repo,gist",
+              token_type: "bearer"
+            },
+            "X-GitHub-Api-Version": "2022-11-28"
+          }
         }
-      })
+      )
       .catch((e) => {
         // alert("get good list error");
         console.log(e);
@@ -42,30 +47,7 @@ const useLocalStorage = () => {
         r.data.map(({ id, body }) => {
           const obj = body.split(SPLIT);
           if ("sports" === obj[0]) {
-            const [_, name, dec, trainTime, relaxTime, round, type, imgList] =
-              obj;
-            data.sports.push({
-              id,
-              name,
-              dec,
-              trainTime: parseInt(trainTime),
-              relaxTime: parseInt(relaxTime),
-              round: parseInt(round),
-              type: (type ?? "")
-                .split(LIST_SPLIT)
-                .map((t) => ({
-                  name: t.split("-")[0],
-                  useBothSide: t.split("-")[1] == "2"
-                })),
-              imgList: imgList
-                ? imgList
-                    .split(LIST_SPLIT)
-                    .map((i) => ({
-                      src: i.split(IMAGE_SPLIT)[0],
-                      sha: i.split(IMAGE_SPLIT)[1]
-                    }))
-                : []
-            });
+            data.sports.push(covertTextToSport(id, obj));
           }
           if ("works" === obj[0]) {
             data.works.push(obj.works);
@@ -75,6 +57,7 @@ const useLocalStorage = () => {
           }
         });
         setData(data);
+        // uploadSportList(data.sports, token);
       });
   };
   const insertData = useCallback(
@@ -206,7 +189,7 @@ const useLocalStorage = () => {
     fetchData();
   }, []);
 
-  return { data, updateData, insertData, deleteData,token,updateToken };
+  return { data, updateData, insertData, deleteData, token, updateToken };
 };
 
 export default useLocalStorage;
@@ -219,12 +202,48 @@ const covertSportToText = (value) => [
   value.relaxTime,
   value.round,
   value.type
-    .map(
-      ({ name, twoSide, useBothSide }) =>
-        `${name}-${twoSide ? (useBothSide ? 2 : 1) : 0}`
-    )
+    .map(({ id, useBothSide }) => `${id}=${useBothSide ? 1 : 0}`)
     .join(LIST_SPLIT),
   value.imgList
     .map(({ src, sha }) => [src, sha].join(IMAGE_SPLIT))
     .join(LIST_SPLIT)
 ];
+const covertTextToSport = (id, textList) => {
+  const [_, name, dec, trainTime, relaxTime, round, type, imgList] = textList;
+  return {
+    id,
+    name,
+    dec,
+    trainTime: parseInt(trainTime),
+    relaxTime: parseInt(relaxTime),
+    round: parseInt(round),
+    type: (type ?? "").split(LIST_SPLIT).map((t) => ({
+      id: t.split("=")[0],
+      useBothSide: t.split("=")[1] == "1"
+    })),
+    imgList: imgList
+      ? imgList.split(LIST_SPLIT).map((i) => ({
+          src: i.split(IMAGE_SPLIT)[0],
+          sha: i.split(IMAGE_SPLIT)[1]
+        }))
+      : []
+  };
+};
+
+export async function uploadSportList(data, token) {
+  const octokit = new Octokit({
+    auth: token
+  });
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+
+  const result = await octokit.repos.createOrUpdateFileContents({
+    owner,
+    repo,
+    message: "Update sports " + new Date().toLocaleString(),
+    path: "assets/sports.txt",
+    content,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  });
+}

@@ -16,6 +16,7 @@ const timePattern = [
   ["自定义"],
   ["暂无时间（回数模式）"],
   ["反复动作", 1, 0, 0, 30, 3],
+  ["左右轮流反复动作", 1, 0, 0, 30, 6],
   ["拉伸", 0, 20, 0, 10, 3],
   ["保持姿势", 0, 30, 0, 30, 3],
   ["泡沫轴", 1, 0, 0, 10, 1]
@@ -58,7 +59,7 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
       setSecStop(getMinAndSec(sport?.relaxTime).seconds);
       setRound(sport.round);
       setFileList(sport.imgList);
-      setType(sport.type ?? []);
+      setType([]);
       setCount(sport.count ?? 10);
     }
   }, [sport]);
@@ -133,7 +134,6 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
       <div className="train-row  space-between">
         动作补充说明： <Input.TextArea rows={3} value={dec} max={10} style={{ width:"fit-content"}} onChange={onChangeDec}/>
       </div>
-      <div className="train-row  space-between">训练部位：</div>
       <div className="train-row no-gap">
         <PartSelect type={type} setType={setType} />
       </div>
@@ -168,7 +168,6 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
         <div>
           <InputNumber
             value={min}
-            step={5}
             onChange={(v) => onChangetime(v, setMin)}
           ></InputNumber>
           分
@@ -186,7 +185,6 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
         <div>
           <InputNumber
             value={minStop}
-            step={5}
             onChange={(v) => onChangetime(v, setMinStop)}
           ></InputNumber>
           分
@@ -214,7 +212,7 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
           <Button onClick={save} disabled={disableStart}>
             保存
           </Button>
-          {!isSingleTrain&&<Button onClick={() => savePlan()}>返回</Button>}
+          {!isSingleTrain&&<Button onClick={() => afterSavePlan()}>返回</Button>}
           {isSingleTrain&&<Button onClick={() => setSave(false)}>返回</Button>}
         </div>}
             {!canSave &&
