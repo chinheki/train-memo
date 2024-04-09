@@ -5,9 +5,11 @@ import "./i18n";
 import { Button, InputNumber, Input, Upload } from "antd";
 import { Outlet } from "react-router-dom";
 import diagram from "../public/assets/images/bk.jpg";
-import useLocalStorage from "./use-local-storage";
-import useTrainPlan from "./use-train-plan";
+import useLocalStorage from "./store/use-local-storage";
+import useTrainPlan from "./store/use-train-plan";
+import { useUserStatus } from "./store/use-user-status";
 export const DataContext = createContext(null);
+export const StatusContext = createContext({user:{userId:"",status:[]}});
 export const UpdateDataContext = createContext({
   update: () => {},
   insert: () => {},
@@ -20,6 +22,7 @@ export const TrainContext = createContext({
 const App = () => {
   const value = useLocalStorage();
   const trainData = useTrainPlan();
+  const user = useUserStatus();
   const onChangeToken = (v) => {
     value.updateToken(v.target.value);
   };
@@ -28,6 +31,7 @@ const App = () => {
       <div className="bk" style={{ backgroundImage: `url(${diagram})` }} />
       {value.token ? (
         <DataContext.Provider value={{ ...value.data, token: value.token }}>
+        <StatusContext.Provider value={user.user}>
           <UpdateDataContext.Provider
             value={{
               update: value.updateData,
@@ -40,6 +44,7 @@ const App = () => {
               <Outlet />
             </TrainContext.Provider>
           </UpdateDataContext.Provider>
+        </StatusContext.Provider>
         </DataContext.Provider>
       ) : (
         <div className="train-board">

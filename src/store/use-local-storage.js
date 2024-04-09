@@ -4,6 +4,7 @@ import { IMAGE_SPLIT } from "./use-image-server";
 import { Octokit } from "@octokit/rest";
 import { owner, repo } from "./use-image-server";
 import { v4 as uuidv4 } from "uuid";
+import { muscleList } from "../pages/WeeklyTrain";
 const SPLIT = "$$$";
 const LIST_SPLIT = ",";
 const useLocalStorage = () => {
@@ -210,6 +211,16 @@ const covertSportToText = (value) => [
 ];
 const covertTextToSport = (id, textList) => {
   const [_, name, dec, trainTime, relaxTime, round, type, imgList] = textList;
+  const types = (type ?? "").split(LIST_SPLIT).map((t) => ({
+    id: t.split("=")[0],
+    useBothSide: t.split("=")[1] == "1"
+  }));
+  types.forEach(t => {
+    const muscle=muscleList.find(({ id }) => id === t.id)
+    if (muscle && !types.some(t => t.id === muscle.body)) {
+      types.push({ id: muscle.body, useBothSide: t.useBothSide })
+    }
+  })
   return {
     id,
     name,
@@ -217,10 +228,7 @@ const covertTextToSport = (id, textList) => {
     trainTime: parseInt(trainTime),
     relaxTime: parseInt(relaxTime),
     round: parseInt(round),
-    type: (type ?? "").split(LIST_SPLIT).map((t) => ({
-      id: t.split("=")[0],
-      useBothSide: t.split("=")[1] == "1"
-    })),
+    type: types,
     imgList: imgList
       ? imgList.split(LIST_SPLIT).map((i) => ({
           src: i.split(IMAGE_SPLIT)[0],

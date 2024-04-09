@@ -1,33 +1,33 @@
 import React, { useState } from "react";
-import { Button, InputNumber } from "antd";
+import { Button } from "antd";
 import "./WeeklyTrain.scss";
 import diagram from "../../../public/assets/images/muscle_diagram.png";
 import Dot from "./components/Dot";
 import Line from "./line";
 export const muscleList = [
-  { id: "muscle-1", en: "Deltoid", ch: "三角肌", jp: "三角筋", top: 106, left: 311, useTwoSide: false, part: "body" },
-  { id: "muscle-2", en: "Infraspinatus", ch: "肩胛下肌", jp: "肩甲下筋", top: 32, left: 700, useTwoSide: false, part: "body" },
-  { id: "muscle-3", en: "Pectoralis major", ch: "胸大肌", jp: "大胸筋", top: 63, left: 10, useTwoSide: false, part: "body" },
-  { id: "muscle-4", en: "Teres major", ch: "肩胛下肌", jp: "肩甲下筋", top: 5, left: 702, useTwoSide: false, part: "body" },
-  { id: "muscle-5", en: "Biceps", ch: "肱二头肌", jp: "上腕二頭筋", top: 57, left: -2, useTwoSide: false, part: "body" },
-  { id: "muscle-6", en: "Latissimus dorsi", ch: "背阔肌", jp: "広背筋", top: -21, left: 705, useTwoSide: false, part: "body" },
-  { id: "muscle-7", en: "Abdominals", ch: "腹肌", jp: "腹筋", top: 40, left: 126, useTwoSide: false, part: "body" },
-  { id: "muscle-8", en: "Serratus anterior", ch: "前锯肌", jp: "鋸筋", top: -90, left: 300, useTwoSide: false, part: "body" },
-  { id: "muscle-9", en: "Triceps", ch: "三头肌", jp: "三頭筋", top: -79, left: 709, useTwoSide: false, part: "body" },
-  { id: "muscle-10", en: "External oblique", ch: "外斜肌", jp: "外腹斜筋", top: -108, left: 336, useTwoSide: false, part: "body" },
-  { id: "muscle-11", en: "Brachioradialis", ch: "桡侧肌", jp: "上腕母筋", top: -97, left: 338, useTwoSide: false, part: "body" },
-  { id: "muscle-12", en: "Finger extensors", ch: "指伸肌", jp: "指伸筋", top: -86, left: 337, useTwoSide: false, part: "body" },
-  { id: "muscle-13", en: "Finger flexors", ch: "指屈肌", jp: "指屈筋", top: -72, left: 280, useTwoSide: false, part: "body" },
-  { id: "muscle-14", en: "Gluteus medius", ch: "臀中肌", jp: "大臀中筋", top: -208, left: 719, useTwoSide: false, part: "body" },
-  { id: "muscle-15", en: "Quadriceps", ch: "股四头肌", jp: "大腿四頭筋", top: -95, left: 280, useTwoSide: false, part: "body" },
-  { id: "muscle-16", en: "Sartorius", ch: "缝匠肌", jp: "裁縫筋", top: -168, left: 13, useTwoSide: false, part: "body" },
-  { id: "muscle-17", en: "Gluteus maximus", ch: "臀大肌", jp: "大臀筋", top: -252, left: 547, useTwoSide: false, part: "body" },
-  { id: "muscle-18", en: "Hamstrings", ch: "腘绳肌", jp: "ハムストリング", top: -152, left: 391, useTwoSide: false, part: "body" },
-  { id: "muscle-19", en: "Abductors", ch: "外展肌", jp: "外腓筋", top: -324, left: 15, useTwoSide: false, part: "body" },
-  { id: "muscle-20", en: "Gastrocnemius", ch: "腓肠肌", jp: "腓腸筋", top: -176, left: 321, useTwoSide: false, part: "body" },
-  { id: "muscle-21", en: "Tibialis anterior", ch: "胫骨前肌", jp: "前脛骨筋", top: -167, left: 337, useTwoSide: false, part: "body" },
-  { id: "muscle-22", en: "Soleus", ch: "比目鱼肌", jp: "ヒラメ筋", top: -258, left: 6, useTwoSide: false, part: "body" },
-  { id: "muscle-23", en: "trapezius", ch: "斜方肌", jp: "斜角筋", top: -688, left: 323, useTwoSide: false, part: "body" }
+  { id: "muscle-1", en: "Deltoid", ch: "三角肌", jp: "三角筋", top: 106, left: 311, useTwoSide: false, body: "body-2" },
+  { id: "muscle-2", en: "Infraspinatus", ch: "肩胛下肌", jp: "肩甲下筋", top: 32, left: 700, useTwoSide: false, body: "body-4" },
+  { id: "muscle-3", en: "Pectoralis major", ch: "胸大肌", jp: "大胸筋", top: 63, left: 10, useTwoSide: false, body: "body-3" },
+  { id: "muscle-4", en: "Teres major", ch: "大圆肌", jp: "大円筋", top: 5, left: 702, useTwoSide: false, body: "body-3" },
+  { id: "muscle-5", en: "Biceps", ch: "肱二头肌", jp: "上腕二頭筋", top: 57, left: -2, useTwoSide: false, body: "body-2" },
+  { id: "muscle-6", en: "Latissimus dorsi", ch: "背阔肌", jp: "広背筋", top: -21, left: 705, useTwoSide: false, body: "body-4" },
+  { id: "muscle-7", en: "Abdominals", ch: "腹肌", jp: "腹筋", top: 40, left: 126, useTwoSide: false, body: "body-2" },
+  { id: "muscle-8", en: "Serratus anterior", ch: "前锯肌", jp: "鋸筋", top: -90, left: 300, useTwoSide: false, body: "body-5" },
+  { id: "muscle-9", en: "Triceps", ch: "三头肌", jp: "三頭筋", top: -79, left: 709, useTwoSide: false, body: "body-2" },
+  { id: "muscle-10", en: "External oblique", ch: "外斜肌", jp: "外腹斜筋", top: -108, left: 336, useTwoSide: false, body: "body-5" },
+  { id: "muscle-11", en: "Brachioradialis", ch: "桡侧肌", jp: "上腕母筋", top: -97, left: 338, useTwoSide: false, body: "body-2" },
+  { id: "muscle-12", en: "Finger extensors", ch: "指伸肌", jp: "指伸筋", top: -86, left: 337, useTwoSide: false, body: "body-1" },
+  { id: "muscle-13", en: "Finger flexors", ch: "指屈肌", jp: "指屈筋", top: -72, left: 280, useTwoSide: false, body: "body-1" },
+  { id: "muscle-14", en: "Gluteus medius", ch: "臀中肌", jp: "大臀中筋", top: -208, left: 719, useTwoSide: false, body: "body-5" },
+  { id: "muscle-15", en: "Quadriceps", ch: "股四头肌", jp: "大腿四頭筋", top: -95, left: 280, useTwoSide: false, body: "body-7" },
+  { id: "muscle-16", en: "Sartorius", ch: "缝匠肌", jp: "裁縫筋", top: -168, left: 13, useTwoSide: false, body: "body-7" },
+  { id: "muscle-17", en: "Gluteus maximus", ch: "臀大肌", jp: "大臀筋", top: -252, left: 547, useTwoSide: false, body: "body-5" },
+  { id: "muscle-18", en: "Hamstrings", ch: "腘绳肌", jp: "ハムストリング", top: -152, left: 391, useTwoSide: false, body: "body-7" },
+  { id: "muscle-19", en: "Abductors", ch: "外展肌", jp: "外腓筋", top: -324, left: 15, useTwoSide: false, body: "body-7" },
+  { id: "muscle-20", en: "Gastrocnemius", ch: "腓肠肌", jp: "腓腸筋", top: -176, left: 321, useTwoSide: false, body: "body-7" },
+  { id: "muscle-21", en: "Tibialis anterior", ch: "胫骨前肌", jp: "前脛骨筋", top: -167, left: 337, useTwoSide: false, body: "body-7" },
+  { id: "muscle-22", en: "Soleus", ch: "比目鱼肌", jp: "ヒラメ筋", top: -258, left: 6, useTwoSide: false, body: "body-7" },
+  { id: "muscle-23", en: "trapezius", ch: "斜方肌", jp: "斜角筋", top: -688, left: 323, useTwoSide: false, body: "body-4" },
 ];
 export const bodyPartList = [
   { id: "body-1", en: "wrist", ch: "手腕", jp: "手首", useTwoSide: true },
@@ -87,8 +87,7 @@ const WeeklyTrain = () => {
       </div>
       <div className="status-board">
         <div className="dots" style={{ "background-image": `url(${diagram})` }}>
-          {muscleMap.map((id) => {
-            const { en, ch, jp, top, left } = muscleMap[id];
+          {muscleList.map(({ id,en, ch, jp, top, left }) => {
             return (
               <Dot
                 color="#fff"

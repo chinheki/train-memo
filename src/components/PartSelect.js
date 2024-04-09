@@ -24,16 +24,14 @@ const proOptions = muscleList.map(({ id, ch, jp, en, useTwoSide }) => ({
   useTwoSide,
   checked: false
 }));
-const PartSelect = ({ type, setType, view }) => {
+const PartSelect = ({ type, setType, view,useMuscle }) => {
   const [pro, setPro] = useState(false);
   const [lan, setLan] = useState(0);
   const op = useMemo(
     () =>
-    view ? [...proOptions, ...bodyOptions] : pro ? proOptions : bodyOptions,
+    view ?useMuscle?proOptions:bodyOptions : pro ? proOptions : bodyOptions,
     [pro, view]
   );
-  console.log(type)
-  console.log(op)
   const onClick = useCallback(
     (id, useTwoSide) => {
       const checked = type.find((t) => t.id === id);

@@ -7,30 +7,35 @@ import React, {
 } from "react";
 import "./Sports.scss";
 import { Button, Checkbox, Select } from "antd";
-import { DataContext, TrainContext, UpdateDataContext } from "../../App";
+import {
+  DataContext,
+  StatusContext,
+  TrainContext,
+  UpdateDataContext
+} from "../../App";
 import PartSelect from "../../components/PartSelect";
 import { redirect, Link } from "react-router-dom";
 import { useNavigate } from "react-router";
 import TrainTimePlan from "../../components/TrainTimePlan";
 import { shuffleList } from "../../utils";
-import { deleteImage } from "../../use-image-server";
 import { bodyPartList, muscleList } from "../WeeklyTrain";
-const columnPattern = ["锻炼部位", "训练模式", "训练时长", "操作"];
-const partOption=[...bodyPartList,...muscleList]
+import { deleteImage } from "../../store/use-image-server";
+const columnPattern = ["锻炼部位", "使用肌肉", "训练模式", "训练时长", "操作"];
 const SportsList = () => {
   const data = useContext(DataContext);
   const plan = useContext(TrainContext);
   const navigate = useNavigate();
   const { update, insert, remove } = useContext(UpdateDataContext);
+  const user = useContext(StatusContext);
   const [newRow, setNewRow] = useState(false);
   const [editSport, setSport] = useState(null);
   const [checked, setChecked] = useState([]);
   const [pattern, setPattern] = useState(0);
-  const [filter,setFilter]=useState({type:[]})
+  const [filter, setFilter] = useState({ body: [], muscle: [] });
   const [lan, setLan] = useState(0);
-  const handleChange = (value) => {
-    setFilter(prev=>({...prev,type:value}))
-  }
+  const handleChange = (value, field) => {
+    setFilter((prev) => ({ ...prev, [field]: value }));
+  };
   const afterSavePlan = () => {
     setNewRow(false);
     setSport(null);
@@ -40,12 +45,22 @@ const SportsList = () => {
     setNewRow(true);
   };
   const onDelete = (plan) => {
-      plan.imgList.forEach((f)=>deleteImage(f))
+    plan.imgList.forEach((f) => deleteImage(f));
     remove("sports", plan.id);
   };
-  const mobile = useMemo(() => window.innerWidth < 800, [window.innerWidth]);
+  const mobile = useMemo(() => window.innerWidth < 600, [window.innerWidth]);
 
-  const filterList=useMemo(()=>(data?.sports||[]).filter((s)=>!filter.type.length||filter.type.some(p=>s.type.some(t=>t.id===p))),[data?.sports,filter])
+  const filterList = useMemo(
+    () =>
+      (data?.sports || []).filter(
+        (s) =>
+          !filter.body.length ||
+          filter.body.some((p) => s.type.some((t) => t.id === p)) &&
+          !filter.muscle.length ||
+          filter.muscle.some((p) => s.type.some((t) => t.id === p))
+      ),
+    [data?.sports, filter]
+  );
   const randomTotalTime = useMemo(() => {
     let totalTime = 0;
     checked.forEach((id) => {
@@ -68,27 +83,45 @@ const SportsList = () => {
     },
     [checked]
   );
-
-  const onRandomCheck = useCallback(
-    () => {
-      const sportList =
-        filterList.map((s) => ({ id: s.id, time: calcTotalTime(s) })) || [];
-      const selectedSports = [];
-      let totalTime = 0;
-      const newList = shuffleList(sportList);
-      for (let i = 0; i < newList.length; i++) {
-        if (totalTime > 20 * 60) break;
-        if (i > 0) {
-          totalTime += plan?.gapTime ?? 0;
-        }
-        selectedSports.push(newList[i].id);
-        totalTime += newList[i].time;
-      }
-
-      setChecked(selectedSports);
-    },
-    [filterList, plan?.gapTime]
+  const disabledSports = useMemo(
+    () =>
+      (data?.sports || [])
+        .filter(
+          (s) =>
+            s.type.some((t) => {
+              const disabledType = (user?.status||[]).find((s) => s.id == t.id);
+              if (disabledType) {
+                if (t.useBothSide) return true;
+                  if (disabledType.left && disabledType.right) {
+                    return true;
+                  }
+              }
+            })
+        )
+        .map(({ id }) => id),
+    [user, data?.sports]
   );
+  console.log(disabledSports)
+  const onRandomCheck = useCallback(() => {
+    const sportList =
+      filterList
+        .filter((s) => !disabledSports.includes(s.id))
+        .map((s) => ({ id: s.id, time: calcTotalTime(s) })) || [];
+    const selectedSports = [];
+    let totalTime = 0;
+    const newList = shuffleList(sportList);
+    for (let i = 0; i < newList.length; i++) {
+      if (totalTime > 20 * 60) break;
+      if (i > 0) {
+        totalTime += plan?.gapTime ?? 0;
+      }
+      selectedSports.push(newList[i].id);
+      totalTime += newList[i].time;
+    }
+
+    setChecked(selectedSports);
+  }, [filterList, plan?.gapTime, disabledSports]);
+
   const onCheckAllChange = useCallback(
     (v) => {
       if (v.target.checked || v.target.aria - checked) {
@@ -99,6 +132,7 @@ const SportsList = () => {
     },
     [indeterminate, checkAll, filterList]
   );
+
   const checkAll = useMemo(
     () => checked.length === filterList.length,
     [checked, filterList]
@@ -107,6 +141,7 @@ const SportsList = () => {
     () => checked.length > 0 && checked.length < filterList.length,
     [checked, filterList]
   );
+
   const generatePlan = useCallback(() => {
     plan.updateTrainList(
       checked
@@ -128,21 +163,36 @@ const SportsList = () => {
               全选
             </Checkbox>
             <Select
-      mode="multiple"
-      allowClear
-      style={{ width: '100%' }}
-      placeholder="筛选健身部位"
-      defaultValue={[]}
-      onChange={handleChange}
+              mode="multiple"
+              allowClear
+              style={{ width: "100%" }}
+              placeholder="筛选健身类型"
+              defaultValue={[]}
+              onChange={(v) => handleChange(v, "body")}
             >
-              {partOption.map(({ en, ch, jp, id }) => (
-                <Select.Option key={id} value={id}>
-                  {lan===0?ch:lan===1?en:jp}
+              {bodyPartList.map(({ en, ch, jp, id }) => (
+                <Select.Option
+                  key={id}
+                  value={id}
+                >
+                  {lan === 0 ? ch : lan === 1 ? en : jp}
                 </Select.Option>
-              
               ))}
-
-    </Select>
+            </Select>
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "100%" }}
+              placeholder="筛选肌肉部位"
+              defaultValue={[]}
+              onChange={(v) => handleChange(v, "muscle")}
+            >
+              {muscleList.map(({ en, ch, jp, id }) => (
+                <Select.Option key={id} value={id}>
+                  {lan === 0 ? ch : lan === 1 ? en : jp}
+                </Select.Option>
+              ))}
+            </Select>
             {!!mobile && (
               <Button
                 onClick={() =>
@@ -160,30 +210,36 @@ const SportsList = () => {
             style={{
               gridTemplateColumns: mobile
                 ? "20px repeat(2, 1fr)"
-                : "20px repeat(5, 1fr)"
+                : "20px repeat(6, 1fr)"
             }}
           >
             {filterList.map((s) => (
               <>
                 <Checkbox
                   onChange={() => onCheck(s.id)}
+                  disabled={disabledSports.includes(s.id)}
                   checked={checked.includes(s.id)}
                 ></Checkbox>
                 <div> {s.name}</div>
                 {(!mobile || pattern === 0) && (
                   <div>
-                    <PartSelect type={s.type} view />
+                    <PartSelect type={s.type} view setType={()=>{}}/>
                   </div>
                 )}
                 {(!mobile || pattern === 1) && (
-                  <div> {formatTime(s.trainTime, s.round)}</div>
+                  <div>
+                    <PartSelect type={s.type} view useMuscle  setType={()=>{}}/>
+                  </div>
                 )}
                 {(!mobile || pattern === 2) && (
+                  <div> {formatTime(s.trainTime, s.round)}</div>
+                )}
+                {(!mobile || pattern === 3) && (
                   <div>
                     {calculateTotalTime(s.trainTime, s.relaxTime, s.round)}
                   </div>
                 )}
-                {(!mobile || pattern === 3) && (
+                {(!mobile || pattern === 4) && (
                   <div>
                     <Button onClick={() => onEdit(s)}>更新</Button>
                     <Button onClick={() => onDelete(s)}>刪除</Button>

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { DataContext, UpdateDataContext } from "../App";
 import PartSelect from "./PartSelect";
 import UploadImages from "./UploadImages";
-import { uploadImage } from "../use-image-server";
+import { uploadImage } from "../store/use-image-server";
 const timePattern = [
   ["自定义"],
   ["暂无时间（回数模式）"],
