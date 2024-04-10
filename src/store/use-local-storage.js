@@ -7,22 +7,21 @@ import { v4 as uuidv4 } from "uuid";
 import { muscleList } from "../pages/WeeklyTrain";
 const SPLIT = "$$$";
 const LIST_SPLIT = ",";
+const maxStock = 60000;
 const useLocalStorage = () => {
   const [token, setToken] = useState(null);
-  const [data, setData] = useState({
-    sports: [],
-    works: [],
-    status: []
-  });
+  const [sports, setSports] = useState([]);
+  const [sportsStock, setSportsStock] = useState([]);
+  const [plans, setPlans] = useState([]);
 
   const updateToken = (v) => {
     localStorage.setItem("train-memo-token", v);
     setToken(v);
   };
-  const fetchData = async () => {
+  const fetchSportsData = async () => {
     axios
       .get(
-        "https://api.github.com/repos/chinheki/train-memo/issues/comments?per_page=100",
+        "https://api.github.com/repos/chinheki/train-memo/issues/3/comments?per_page=100",
         {
           headers: {
             Accept: "application/vnd.github+json",
@@ -35,107 +34,106 @@ const useLocalStorage = () => {
           }
         }
       )
-      .catch((e) => {
-        // alert("get good list error");
-        console.log(e);
-      })
+
       .then((r) => {
-        const data = {
-          sports: [],
-          works: [],
-          status: []
-        };
-        r.data.map(({ id, body }) => {
-          const obj = body.split(SPLIT);
-          if ("sports" === obj[0]) {
-            data.sports.push(covertTextToSport(id, obj));
-          }
-          if ("works" === obj[0]) {
-            data.works.push(obj.works);
-          }
-          if ("status" === obj[0]) {
-            data.status.push(obj.status);
-          }
+        if (r.message || !r.data) {
+          window.alert(r.message || "get sports list error");
+          const localData = localStorage.getItem("train-memo-data-sports");
+          // return localData?JSON.parse(localData):{sports:[]};
+          setSports(localData ? JSON.parse(localData) : []);
+          return;
+        }
+        if (!r.data) return;
+        const sports = [];
+        const stock = [];
+        r.data.forEach((body) => {
+          stock.push({ id: body.id, isMax: body.body.length > maxStock });
+          sports.push(
+            ...JSON.parse(body.body).map((r) => ({ ...r, stockId: body.id }))
+          );
         });
-        setData(data);
-        // uploadSportList(data.sports, token);
+        setSports(sports);
+        setSportsStock(stock);
+        localStorage.setItem("train-memo-data-sports", JSON.stringify(sports));
+        localStorage.setItem("train-memo-data-stock", JSON.stringify(stock));
+      })
+      .catch((e) => {
+        console.log(e);
+        return;
       });
   };
-  const insertData = useCallback(
-    async (key, value) => {
-      const text =
-        key === "sports"
-          ? covertSportToText(value)
-          : key === "works"
-          ? [
-              "works",
-              value.name,
-              value.dec,
-              value.trainTime,
-              value.relaxTime,
-              value.round
-            ]
-          : [
-              "status",
-              value.name,
-              value.dec,
-              value.trainTime,
-              value.relaxTime,
-              value.round
-            ];
-      axios
-        .post(
-          "https://api.github.com/repos/chinheki/train-memo/issues/1/comments",
-          {
-            body: text.join(SPLIT)
-          },
-          {
-            headers: {
-              Accept: "application/vnd.github+json",
-              Authorization: `Bearer ${token}`,
-
-              "X-GitHub-Api-Version": "2022-11-28"
+  const insertSport = useCallback(
+    async (value) => {
+      const newSport = { id: uuidv4(), ...value };
+      const stockId = sportsStock.find(({ isMax }) => !isMax)?.id;
+      if (stockId) {
+        const sportsList = sports.filter((s) => s.stockId === stockId);
+        sportsList.push(newSport);
+        const body = JSON.stringify(sportsList.map(s=>({...s,stockId:undefined})));
+        axios
+          .post(
+            "https://api.github.com/repos/chinheki/train-memo/issues/comments/" +
+              stockId,
+            {
+              body: body
+            },
+            {
+              headers: {
+                Accept: "application/vnd.github+json",
+                Authorization: `Bearer ${token}`,
+                "X-GitHub-Api-Version": "2022-11-28"
+              }
             }
-          }
-        )
-        .catch((e) => {
-          console.log(e);
-        })
-        .then((r) => {
-          data[key].push({ ...value, id: r.data.id });
-          setData({ ...data });
-        });
+          )
+          .catch((e) => {
+            console.log(e);
+          })
+          .then((r) => {
+            sports.push({ ...newSport, stockId });
+            setSports([...sports]);
+            if (body.length > maxStock) {
+              setSportsStock([...sportsStock.filter(s=>s.id!==stockId), { id: stockId, isMax: true }]);
+            }
+          });
+      } else {
+        const body = JSON.stringify([newSport]);
+        axios
+          .post(
+            "https://api.github.com/repos/chinheki/train-memo/issues/3/comments",
+            {
+              body:body
+            },
+            {
+              headers: {
+                Accept: "application/vnd.github+json",
+                Authorization: `Bearer ${token}`,
+                "X-GitHub-Api-Version": "2022-11-28"
+              }
+            }
+          )
+          .catch((e) => {
+            console.log(e);
+          })
+          .then((r) => {
+             sports.push({ ...newSport, stockId:r.data.id });
+            setSports([...sports]);
+            setSportsStock([...sportsStock, { id: r.data.id, isMax: body.length > maxStock }]);
+             localStorage.setItem("train-memo-data-sports", JSON.stringify(sports));
+        localStorage.setItem("train-memo-data-stock", JSON.stringify(stock));
+          });
+      }
     },
-    [data]
+    [sports]
   );
 
-  const updateData = async (key, value) => {
-    const text =
-      key === "sports"
-        ? covertSportToText(value)
-        : key === "works"
-        ? [
-            "works",
-            value.name,
-            value.dec,
-            value.trainTime,
-            value.relaxTime,
-            value.round
-          ]
-        : [
-            "status",
-            value.name,
-            value.dec,
-            value.trainTime,
-            value.relaxTime,
-            value.round
-          ];
+  const updateSport = async ( value) => {
+        const body = JSON.stringify(sportsList.map(s=>({...s,stockId:undefined})));
     axios
       .post(
         "https://api.github.com/repos/chinheki/train-memo/issues/comments/" +
-          value.id,
+          stockId,
         {
-          body: text.join(SPLIT)
+          body: body
         },
         {
           headers: {
@@ -145,52 +143,93 @@ const useLocalStorage = () => {
           }
         }
       )
-
       .catch((e) => {
         console.log(e);
       })
       .then((r) => {
-        const updatedData = data[key].map((item) => {
-          if (item.id === value.id) {
-            return { ...value };
-          }
-          return item;
-        });
-        setData({ ...data, [key]: [...updatedData] });
+        const newlist = sports.map((s) => s.id === value.id?{...value}:s)
+            setSports([...newlist]);
+            if (body.length > maxStock) {
+              setSportsStock([...sportsStock.filter(s=>s.id!==stockId), { id: stockId, isMax: true }]);
+        }
+         localStorage.setItem("train-memo-data-sports", JSON.stringify(sports));
+        localStorage.setItem("train-memo-data-stock", JSON.stringify(stock));
+        
       });
   };
-  const deleteData = async (key, id) => {
-    axios
-      .delete(
-        "https://api.github.com/repos/chinheki/train-memo/issues/comments/" +
-          id,
-        {
-          headers: {
-            Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${token}`,
-            "X-GitHub-Api-Version": "2022-11-28"
+  const deleteSport = async (stockId, id) => {
+    const body = JSON.stringify(sportsList.filter(s => s.id !== id).map(s => ({ ...s, stockId: undefined })));
+    if (body.length) {
+      axios
+        .post(
+          "https://api.github.com/repos/chinheki/train-memo/issues/comments/" +
+          stockId,
+          {
+            body: body
+          },
+          {
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${token}`,
+              "X-GitHub-Api-Version": "2022-11-28"
+            }
           }
-        }
-      )
+        )
+        .catch((e) => {
+          console.log(e);
+        })
+        .then((r) => {
+          const newlist = sports.filter((s) => s.id !== id );
+          setSports([...newlist]);
+          if (body.length > maxStock) {
+            setSportsStock([...sportsStock.filter(s => s.id !== stockId), { id: stockId, isMax: true }]);
+          }
+          localStorage.setItem("train-memo-data-sports", JSON.stringify(sports));
+          localStorage.setItem("train-memo-data-stock", JSON.stringify(stock));
+        
+        });
+    } else {
+      axios
+        .delete(
+          "https://api.github.com/repos/chinheki/train-memo/issues/comments/" +
+          stockId,
+          {
+            headers: {
+              Accept: "application/vnd.github+json",
+              Authorization: `Bearer ${token}`,
+              "X-GitHub-Api-Version": "2022-11-28"
+            }
+          }
+        )
 
-      .then((r) => {
-        console.log(r);
-        if (r.status === 204) {
-          const updatedData = data[key].filter((item) => item.id !== id);
-          setData({ ...data, [key]: updatedData });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+        .then((r) => {
+           const newlist = sports.filter((s) => s.id !== id );
+          setSports([...newlist]);
+          if (body.length > maxStock) {
+            setSportsStock([...sportsStock.filter(s => s.id !== stockId), { id: stockId, isMax: true }]);
+          }
+          localStorage.setItem("train-memo-data-sports", JSON.stringify(sports));
+          localStorage.setItem("train-memo-data-stock", JSON.stringify(stock));
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
   useEffect(() => {
     const token = localStorage.getItem("train-memo-token");
     setToken(token);
-    fetchData();
+    fetchSportsData();
   }, []);
 
-  return { data, updateData, insertData, deleteData, token, updateToken };
+  return {
+    sports,
+    updateSport: updateSport,
+    insertSport: insertSport,
+    deleteData: deleteSport,
+    token,
+    updateToken
+  };
 };
 
 export default useLocalStorage;
@@ -215,12 +254,12 @@ const covertTextToSport = (id, textList) => {
     id: t.split("=")[0],
     useBothSide: t.split("=")[1] == "1"
   }));
-  types.forEach(t => {
-    const muscle=muscleList.find(({ id }) => id === t.id)
-    if (muscle && !types.some(t => t.id === muscle.body)) {
-      types.push({ id: muscle.body, useBothSide: t.useBothSide })
+  types.forEach((t) => {
+    const muscle = muscleList.find(({ id }) => id === t.id);
+    if (muscle && !types.some((t) => t.id === muscle.body)) {
+      types.push({ id: muscle.body, useBothSide: t.useBothSide });
     }
-  })
+  });
   return {
     id,
     name,

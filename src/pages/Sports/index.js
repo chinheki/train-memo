@@ -46,7 +46,7 @@ const SportsList = () => {
   };
   const onDelete = (plan) => {
     plan.imgList.forEach((f) => deleteImage(f));
-    remove("sports", plan.id);
+    remove(plan.stockId, plan.id);
   };
   const mobile = useMemo(() => window.innerWidth < 600, [window.innerWidth]);
 

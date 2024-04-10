@@ -41,9 +41,9 @@ const TrainTimePlan = ({ isSingleTrain,  afterSavePlan, sport }) => {
     const savePlan = (plan) => {
     if (!!plan) {
       if (plan.id) {
-        update("sports", plan);
+        update( plan);
       } else {
-        insert("sports", plan);
+        insert( plan);
       }
       isSingleTrain && navigate("/sports");
       afterSavePlan()
