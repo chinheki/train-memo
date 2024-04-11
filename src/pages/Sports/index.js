@@ -6,7 +6,8 @@ import React, {
   useCallback
 } from "react";
 import "./Sports.scss";
-import { Button, Checkbox, Select } from "antd";
+import { Button, Checkbox, Select,InputNumber,Modal } from "antd";
+import {CaretUpOutlined,CaretDownOutlined} from "@ant-design/icons";
 import {
   DataContext,
   StatusContext,
@@ -28,8 +29,11 @@ const SportsList = () => {
   const { update, insert, remove } = useContext(UpdateDataContext);
   const user = useContext(StatusContext);
   const [newRow, setNewRow] = useState(false);
+  const [sortMode, setSortMode] = useState(false);
   const [editSport, setSport] = useState(null);
   const [checked, setChecked] = useState([]);
+  const [isModalOpen,setIsModalOpen]=useState(false)
+const [randomSetting,setRandom]=useState({anaerobic:true,aerobic:true,strength:true,time:20})
   const [pattern, setPattern] = useState(0);
   const [filter, setFilter] = useState({ body: [], muscle: [] });
   const [lan, setLan] = useState(0);
@@ -101,7 +105,7 @@ const SportsList = () => {
         .map(({ id }) => id),
     [user, data?.sports]
   );
-  console.log(disabledSports)
+
   const onRandomCheck = useCallback(() => {
     const sportList =
       filterList
@@ -111,7 +115,7 @@ const SportsList = () => {
     let totalTime = 0;
     const newList = shuffleList(sportList);
     for (let i = 0; i < newList.length; i++) {
-      if (totalTime > 20 * 60) break;
+      if (totalTime > (randomSetting.time??20) * 60) break;
       if (i > 0) {
         totalTime += plan?.gapTime ?? 0;
       }
@@ -120,7 +124,7 @@ const SportsList = () => {
     }
 
     setChecked(selectedSports);
-  }, [filterList, plan?.gapTime, disabledSports]);
+  }, [filterList, plan?.gapTime, disabledSports,randomSetting]);
 
   const onCheckAllChange = useCallback(
     (v) => {
@@ -132,7 +136,20 @@ const SportsList = () => {
     },
     [indeterminate, checkAll, filterList]
   );
-
+  const upRow = useCallback((id, up = false) => {
+    const newList = [...checked];
+    const index = checked.findIndex((s) => s === id);
+    if (index !== -1 && index < checked.length - 1 && !up) {
+      const temp = newList[index];
+      newList[index] = newList[index + 1];
+      newList[index + 1] = temp;
+    } else if (index !== -1 && index > 0 && up) {
+      const temp = newList[index];
+      newList[index] = newList[index - 1];
+      newList[index - 1] = temp;
+    }
+    setChecked([...newList]);
+  }, [checked]);
   const checkAll = useMemo(
     () => checked.length === filterList.length,
     [checked, filterList]
@@ -142,14 +159,20 @@ const SportsList = () => {
     [checked, filterList]
   );
 
-  const generatePlan = useCallback(() => {
-    plan.updateTrainList(
-      checked
-        .map((id) => (filterList || []).find((s) => s.id === id))
-        .filter((d) => !!d)
-    );
-    navigate("/");
-  }, [checked, plan, filterList, redirect]);
+  const generatePlan = useCallback((e) => {
+    e.preventDefault();
+    if (sortMode) {
+      plan.updateTrainList(
+        checked
+          .map((id) => (filterList || []).find((s) => s.id === id))
+          .filter((d) => !!d)
+      );
+      navigate("/");
+    } else {
+      setSortMode(true);
+      
+    }
+  }, [checked, plan, filterList, redirect,sortMode]);
   return (
     <>
       {!newRow && (
@@ -205,54 +228,56 @@ const SportsList = () => {
               </Button>
             )}
           </div>
-          <div
+          <table
             className="sports-grid scroll"
-            style={{
-              gridTemplateColumns: mobile
-                ? "20px repeat(2, 1fr)"
-                : "20px repeat(6, 1fr)"
-            }}
           >
-            {filterList.map((s) => (
-              <>
-                <Checkbox
+            {(sortMode?checked.map(id=>(data.sports||[]).find(s=>s.id===id)).filter(s=>!!s):filterList).map((s,i) => (
+              <tr key={s.id}>
+                {!sortMode && <td><Checkbox
                   onChange={() => onCheck(s.id)}
                   disabled={disabledSports.includes(s.id)}
                   checked={checked.includes(s.id)}
-                ></Checkbox>
-                <div> {s.name}</div>
+                ></Checkbox></td>}
+                {sortMode && <td>{i>0&&<CaretUpOutlined onClick={()=> upRow(s.id,true)} />}{i<checked.length-1&&<CaretDownOutlined onClick={()=> upRow(s.id)}/>}</td>}
+                <td> {s.name}</td>
                 {(!mobile || pattern === 0) && (
-                  <div>
+                  <td>
                     <PartSelect type={s.type} view setType={()=>{}}/>
-                  </div>
+                  </td>
                 )}
                 {(!mobile || pattern === 1) && (
-                  <div>
+                  <td>
                     <PartSelect type={s.type} view useMuscle  setType={()=>{}}/>
-                  </div>
+                  </td>
                 )}
                 {(!mobile || pattern === 2) && (
-                  <div> {formatTime(s.trainTime, s.round)}</div>
+                  <td> {formatTime(s.trainTime, s.round)}</td>
                 )}
                 {(!mobile || pattern === 3) && (
-                  <div>
+                  <td>
                     {calculateTotalTime(s.trainTime, s.relaxTime, s.round)}
-                  </div>
+                  </td>
                 )}
                 {(!mobile || pattern === 4) && (
-                  <div>
+                  <td>
                     <Button onClick={() => onEdit(s)}>更新</Button>
-                    <Button onClick={() => onDelete(s)}>刪除</Button>
-                  </div>
+                  </td>
                 )}
-              </>
+                   {(!mobile || pattern === 4) && (
+                  <td>
+                    <Button onClick={() => onDelete(s)}>刪除</Button>
+                  </td>
+                )}
+              </tr>
             ))}
-          </div>
+          </table>
           <div className="sport-row">
             <Button onClick={() => setNewRow(true)}>添加</Button>
           </div>
           <div className="sport-row">
-            <Button onClick={onRandomCheck}>随机选择</Button>
+            {!sortMode&&<Button onClick={onRandomCheck}>随机选择</Button>}
+            {!sortMode&&<Button onClick={()=>setIsModalOpen(true)}>设定</Button>}
+            {sortMode&&<Button onClick={()=>setSortMode(false)}>重新选择</Button>}
             <Button onClick={generatePlan} disabled={!checked.length}>
               生成训练计划(共{randomTotalTime})
             </Button>
@@ -262,6 +287,26 @@ const SportsList = () => {
       {newRow && (
         <TrainTimePlan afterSavePlan={afterSavePlan} sport={editSport} />
       )}
+       <Modal  footer={[
+          <Button key="back" onClick={()=>setIsModalOpen(false)}>
+            Ok
+          </Button>,
+         
+        ]} title="随机选择设定" open={isModalOpen} closeIcon={null}>
+        <Checkbox
+                  onChange={() => setRandom(prev=>({...prev,anaerobic:!prev.anaerobic}))}
+                  checked={randomSetting.anaerobic}
+        >无氧</Checkbox>
+          <Checkbox
+                  onChange={() => setRandom(prev=>({...prev,aerobic:!prev.aerobic}))}
+                  checked={randomSetting.aerobic}
+                >有氧</Checkbox>
+                  <Checkbox
+                  onChange={() => setRandom(prev=>({...prev,strength:!prev.strength}))}
+                  checked={randomSetting.strength}
+        >拉伸</Checkbox>
+        <div>训练时长<InputNumber value={randomSetting.time} onChange={v=>setRandom(prev=>({...prev,time:v}))} label="训练时长"/>分钟</div>
+      </Modal>
     </>
   );
 };

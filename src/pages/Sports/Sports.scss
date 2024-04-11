@@ -1,25 +1,16 @@
 .sports-grid {
-  display: grid;
-  grid-template-columns: 20px repeat(6, 1fr);
-  grid-gap: 10px; /* Adjust the gap between columns as needed */
-  align-items: center; /* Vertically center the items */
-  justify-items: center; /* Horizontally center the items */
-  overflow-y: auto;
+  display: block;
+  overflow-y: scroll;
   height: 100%;
-    > div {
-    display: inline-flex;
-    gap: 2px;
-    .part {
+    div.train-row div.part {
       padding: 2px;
       font-size: 12px;
       user-select: none;
       cursor: pointer;
     }
-  }
- 
 }
 
-.title{
+.title {
   width: 100%;
   display: flex;
   justify-content: center;
