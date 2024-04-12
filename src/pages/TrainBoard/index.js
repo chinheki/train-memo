@@ -7,15 +7,21 @@ import React, {
 } from "react";
 import "./TrainBoard.scss";
 import { TrainContext } from "../../App";
-import TrainInPlan from "../../components/TrainInPlan";
-import TrainTimePlan from "../../components/TrainTimePlan";
+import TrainForm from "../../components/TrainForm";
+import { getTimeList } from "../../utils";
+import TimerWithAction from "../../components/TimerWithAction";
 const TrainBoard = () => {
   const data = useContext(TrainContext);
+  const timeList = useMemo(() => {
+    return getTimeList(data.trainList || [], data?.gapTime ?? 0);
+  }, [data.trainList, data?.gapTime]);
   return (
     <>
-      {!data.trainList.length && <TrainTimePlan isSingleTrain={true} />}
+      {!data.trainList.length && <TrainForm isSingleTrain={true} />}
       {!!data.trainList.length && (
-              <TrainInPlan sports={data.trainList} />
+        <div className="train-board" style={{ height: "100%" }}>
+          <TimerWithAction timeList={timeList} />
+        </div>
       )}
     </>
   );

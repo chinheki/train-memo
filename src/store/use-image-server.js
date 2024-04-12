@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Octokit } from "@octokit/rest";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 export const owner = "chinheki";
 export const repo = "image-server";
@@ -15,12 +14,12 @@ const toBase64 = (file) =>
     reader.onerror = reject;
   });
 
-export async function uploadImage(files,token) {
-    const octokit = new Octokit({
-  auth: token,
-});
-    const fileList = [];
-    console.log(files)
+export async function uploadImage(files, token) {
+  const octokit = new Octokit({
+    auth: token
+  });
+  const fileList = [];
+  console.log(files);
   for (let i = 0; i < files.length; i++) {
     const fileObj = files[i];
     if (fileObj.file) {
@@ -30,33 +29,37 @@ export async function uploadImage(files,token) {
           owner,
           repo,
           message: "Adding an image",
-          path: "assets/images/" + uuidv4() + fileObj.file.name.split(".")[1],
+          path: "assets/images/" + uuidv4() + fileObj.file.name,
           content
         });
-        fileList.push({ src: result.data.content.download_url, sha: result.data.content.sha });
+        fileList.push({
+          src: result.data.content.download_url,
+          sha: result.data.content.sha
+        });
       }
     } else if (fileObj.needDelete && fileObj.sha) {
-      deleteImage(fileObj, token)
-} else {
-          fileList.push(fileObj)
-          
-      }
+      deleteImage(fileObj, token);
+    } else {
+      fileList.push(fileObj);
+    }
   }
   return fileList;
 }
 export async function deleteImage(file, token) {
   if (!file.sha) return;
-    const octokit = new Octokit({
-  auth: token,
-});
-
-          octokit.rest.repos.deleteFile({
-  owner,
-  repo,
-  path,
-  message: "delete useless image",
-  sha:file.sha,
-});
-
+  const octokit = new Octokit({
+    auth: token
+  });
+  const path = "assets/images/" + file.src.split("/").slice(-1);
+  await octokit.request(`DELETE /repos/${owner}/${repo}/contents/${path}`, {
+    owner,
+    repo,
+    path,
+    message: "delete useless image",
+    sha: file.sha,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  });
 }
-export const IMAGE_SPLIT=" _::_ "
+export const IMAGE_SPLIT = " _::_ ";

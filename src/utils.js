@@ -1,7 +1,6 @@
 import start from "../public/assets/sounds/start.mp3";
 import stop from "../public/assets/sounds/stop.mp3";
 
-
 export function playRelaxSound() {
   // Code to play the sound
   // You can use the HTML5 Audio element or any other library to play the sound
@@ -14,47 +13,89 @@ export function playStartSound() {
   const audio = new Audio(start);
   audio.play();
 }
-  export const getMinAndSec = (totalSeconds) => {
-    if (!totalSeconds||typeof totalSeconds !== 'number') {
-      return { minutes: 0, seconds: 0 };
-    }
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return { minutes, seconds };
+export const getMinAndSec = (totalSeconds) => {
+  if (!totalSeconds || typeof totalSeconds !== "number") {
+    return { minutes: 0, seconds: 0 };
   }
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return { minutes, seconds };
+};
 export function getTotalSeconds(min, sec) {
-  return (min??0) * 60 +( sec??0);
+  return (min ?? 0) * 60 + (sec ?? 0);
 }
 export function getTimerStringBySeconds(seconds) {
   const padZero = (num) => (num < 10 ? "0" + num : num);
-  const minute =Math.floor(seconds / 60);
+  const minute = Math.floor(seconds / 60);
   const second = seconds % 60;
   const formattedTime = `${padZero(minute)}:${padZero(second)}`;
   return formattedTime;
 }
-export function getTimeList(list,gapTime) {
+export function getTimeList(list, gapTime) {
   const timeList = [];
-  for (let i = 0; i < list.length; i++){
-    const { trainTime, relaxTime, round,name,imgList,dec } = list[i];
+  for (let i = 0; i < list.length; i++) {
+    const { trainTime, relaxTime, round, name, imgList, dec } = list[i];
     if (i !== 0) {
-      timeList.push({imgList,dec , time: gapTime, type: "gap",turn:`1/${round}`,prex:`即将开始：${i+1}/${list.length+1} ${name} 1/${round}`})
+      timeList.push({
+        imgList,
+        dec,
+        time: gapTime,
+        type: "gap",
+        turn: `1/${round}`,
+        prex: `即将开始：${i + 1}/${list.length + 1} ${name} 1/${round}`
+      });
     }
     for (let i2 = 0; i2 < round; i2++) {
-      timeList.push({imgList,dec , time: trainTime, type: "train",turn:`${i2+1}/${round}`,prex:`训练中：${i+1}/${list.length+1} ${name} ${i2+1}/${round}` });
-      if (i2 !== round - 1 && relaxTime >0) {
-        timeList.push({ imgList,dec ,time: relaxTime, type: "relax",turn:`${i2+2}/${round}`,prex:`休息中：${i+1}/${list.length+1} ${name} ${i2+2}/${round}` });
+      timeList.push({
+        imgList,
+        dec,
+        time: trainTime,
+        type: "train",
+        turn: `${i2 + 1}/${round}`,
+        prex: `训练中：${i + 1}/${list.length + 1} ${name} ${i2 + 1}/${round}`
+      });
+      if (i2 !== round - 1 && relaxTime > 0) {
+        timeList.push({
+          imgList,
+          dec,
+          time: relaxTime,
+          type: "relax",
+          turn: `${i2 + 2}/${round}`,
+          prex: `休息中：${i + 1}/${list.length + 1} ${name} ${i2 + 2}/${round}`
+        });
       }
     }
   }
-  console.log(timeList)
+  console.log(timeList);
   return timeList;
 }
 
- export const shuffleList = (list) => {
-    const shuffledList = [...list];
-    for (let i = shuffledList.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
-   }
-   return shuffledList
-  };
+export const shuffleList = (list) => {
+  const shuffledList = [...list];
+  for (let i = shuffledList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
+  }
+  return shuffledList;
+};
+
+export function getTypesFromName(name) {
+  const types = [];
+  if (name.includes("胸")) {
+    types.push("body-3");
+  }
+  if (name.includes("髋")) {
+    types.push("body-7");
+  }
+  if (name.includes("腿")) {
+    types.push("body-7");
+  }
+  if (name.includes("膝")) {
+    types.push("body-7");
+  }
+  if (name.includes("蹲")) {
+    types.push("body-7");
+  }
+
+  return types;
+}

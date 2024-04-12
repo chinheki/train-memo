@@ -9,7 +9,7 @@ import {
 } from "../utils";
 import Timer from "./Timer";
 import Images from "./Images";
-const TrainTimer = ({ timeList}) => {
+const TimerWithAction = ({ timeList}) => {
   const [time, setTime] = useState(timeList[0]?.time ?? 0);
   const [timer, setTimer] = useState(false);
   const [finish, setFinish] = useState(true);
@@ -75,4 +75,4 @@ const TrainTimer = ({ timeList}) => {
     </>
   );
 };
-export default TrainTimer;
+export default TimerWithAction;

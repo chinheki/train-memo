@@ -1,5 +1,6 @@
 .sports-grid {
   display: block;
+  padding: 4px 16px;
   overflow-y: scroll;
   height: 100%;
 }

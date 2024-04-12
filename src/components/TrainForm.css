@@ -1,0 +1,10 @@
+.train-row button.up-btn, .train-row button.down-btn {
+  color: green;
+  width: 12px;
+  font-size: 12px;
+  align-self: center;
+}
+
+.train-row button.up-btn.down-btn, .train-row button.down-btn.down-btn {
+  color: red;
+}

@@ -1,1 +1,1 @@
-.sports-grid{display:block;overflow-y:scroll;height:100%}.sports-grid div.train-row div.part{padding:2px;font-size:12px;user-select:none;cursor:pointer}.title{width:100%;display:flex;justify-content:center}
+.sports-grid{display:block;padding:4px 16px;overflow-y:scroll;height:100%}.sports-grid div.train-row div.part{padding:2px;font-size:12px;user-select:none;cursor:pointer}.title{width:100%;display:flex;justify-content:center}
